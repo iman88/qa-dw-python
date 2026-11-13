@@ -1,0 +1,29 @@
+# Fixed project name, so the container and volume do not depend on the folder name.
+name: qa-dw-python
+
+services:
+  postgres:
+    # Exact Postgres release, locked by digest: a re-pushed tag cannot change it.
+    image: postgres:18.7-alpine@sha256:75dcac3dfb1cd01ca3536910bbc84128759362f8b118bf8c55b38a94f68f3b73
+    container_name: clinical-dq-postgres
+    # Parallel test workers each rebuild ~300 partitioned tables in one transaction: give them lock slots
+    # and connections (defaults: 64 locks per transaction, 100 connections).
+    command: ["postgres", "-c", "max_locks_per_transaction=1024", "-c", "max_connections=400"]
+    environment:
+      POSTGRES_USER: qa
+      POSTGRES_PASSWORD: qa
+      POSTGRES_DB: clinical
+      TZ: UTC
+      PGTZ: UTC
+    ports:
+      - "55432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U qa -d clinical"]
+      interval: 2s
+      timeout: 3s
+      retries: 30
+    volumes:
+      - pgdata:/var/lib/postgresql
+
+volumes:
+  pgdata:

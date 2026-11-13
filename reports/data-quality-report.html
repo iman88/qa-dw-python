@@ -1,0 +1,1535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Quality Report</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --ink: #1d2433; --muted: #5d6779; --line: #e3e7ee;
+    --ok: #1f8a5b; --ok-bg: #e6f5ee; --bad: #c2352d; --bad-bg: #fdecea; --accent: #2f5bd3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #11151c; --card: #1a202a; --ink: #e6e9ef; --muted: #9aa4b5; --line: #2a3240;
+            --ok: #4cc38a; --ok-bg: #12271d; --bad: #f2766d; --bad-bg: #2d1715; --accent: #7c9cff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); }
+  header { padding: 28px 32px 8px; }
+  h1 { margin: 0 0 4px; font-size: 22px; }
+  h2 { font-size: 16px; margin: 28px 0 10px; }
+  .muted { color: var(--muted); }
+  main { padding: 0 32px 40px; max-width: 1280px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .card .big { font-size: 26px; font-weight: 650; }
+  .bar { height: 6px; background: var(--bad-bg); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+  .bar > span { display: block; height: 100%; background: var(--ok); }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }
+  tr:last-child td { border-bottom: 0; }
+  .pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  .ok { color: var(--ok); background: var(--ok-bg); }
+  .bad { color: var(--bad); background: var(--bad-bg); }
+  code, pre { font: 12px/1.45 ui-monospace, "Cascadia Code", Consolas, monospace; }
+  pre { white-space: pre-wrap; margin: 6px 0 0; background: var(--bg); padding: 8px; border-radius: 6px; }
+  details summary { cursor: pointer; color: var(--accent); }
+  .layer { font-size: 11px; color: var(--muted); text-transform: uppercase; }
+  .stats { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+  .stats div { white-space: nowrap; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Data Quality Report</h1>
+  <div class="muted">Clinical safety warehouse · generated 2026-11-13T09:21:50+00:00</div>
+</header>
+<main>
+  <section class="cards">
+    
+    
+    <div class="card">
+      <div class="muted">Requirements verified</div>
+      <div class="big">12 / 13</div>
+      <div class="bar"><span style="width: 92.3076923076923%"></span></div>
+    </div>
+    
+    
+    <div class="card">
+      <div class="muted">Reconciliations</div>
+      <div class="big">37 / 37</div>
+      <div class="bar"><span style="width: 100.0%"></span></div>
+    </div>
+    
+    
+    <div class="card">
+      <div class="muted">Data quality rules</div>
+      <div class="big">66 / 66</div>
+      <div class="bar"><span style="width: 100.0%"></span></div>
+    </div>
+    
+    
+    <div class="card">
+      <div class="muted">Defects caught</div>
+      <div class="big">18 / 18</div>
+      <div class="bar"><span style="width: 100.0%"></span></div>
+    </div>
+    
+    
+    <div class="card">
+      <div class="muted">GenAI cases</div>
+      <div class="big">25 / 25</div>
+      <div class="bar"><span style="width: 100.0%"></span></div>
+    </div>
+    
+  </section>
+
+  
+  <h2>Pipeline build</h2>
+  <div class="card stats">
+    <div><span class="muted">change events:</span> <b>1935</b></div><div><span class="muted">delivered events:</span> <b>2050</b></div><div><span class="muted">duplicate deliveries:</span> <b>115</b></div><div><span class="muted">late arrivals:</span> <b>84</b></div><div><span class="muted">deletes:</span> <b>7</b></div><div><span class="muted">source study rows:</span> <b>3</b></div><div><span class="muted">source site rows:</span> <b>12</b></div><div><span class="muted">source subject rows:</span> <b>120</b></div><div><span class="muted">source visit rows:</span> <b>701</b></div><div><span class="muted">source adverse event rows:</span> <b>205</b></div>
+    <div><span class="muted">generate:</span> 203.6 ms</div><div><span class="muted">landing:</span> 3300.1 ms</div><div><span class="muted">history:</span> 224.5 ms</div><div><span class="muted">latest:</span> 165.8 ms</div><div><span class="muted">dimensions:</span> 406.5 ms</div><div><span class="muted">facts:</span> 457.3 ms</div><div><span class="muted">views:</span> 37.2 ms</div><div><span class="muted">security:</span> 9.6 ms</div>
+  </div>
+  
+
+  
+  <h2>Requirements traceability</h2>
+  <table>
+    <tr><th>Requirement</th><th>Statement</th><th>Status</th><th>Scenarios</th></tr>
+    
+    <tr>
+      <td><b>REQ_01</b><div class="muted">Completeness and accuracy</div></td>
+      <td>Every current source record reaches each layer and the warehouse complete and unchanged, row by row and in aggregate.</td>
+      <td><span class="pill ok">PASSED</span></td>
+      <td>37 / 37 passed<div class="layer">pushdown, recon, warehouse</div></td>
+    </tr>
+    
+    <tr>
+      <td><b>REQ_02</b><div class="muted">Deduplication and deletes</div></td>
+      <td>Redelivered change events are kept once, the latest change per key wins, and records deleted in the source are removed from current state.</td>
+      <td><span class="pill ok">PASSED</span></td>
+      <td>26 / 26 passed<div class="layer">edge, history</div></td>
+    </tr>
+    
+    <tr>
+      <td><b>REQ_03</b><div class="muted">Full history</div></td>
+      <td>Every change is kept exactly once with a clean validity timeline per key, including deletes as tombstones.</td>
+      <td><span class="pill ok">PASSED</span></td>
+      <td>26 / 26 passed<div class="layer">edge, history</div></td>
+    </tr>
+    
+    <tr>
+      <td><b>REQ_04</b><div class="muted">Dimensional model integrity</div></td>
+      <td>Keys are unique, every fact finds its dimension rows, and type 2 dimensions are joined at the point in time of the event.</td>
+      <td><span class="pill ok">PASSED</span></td>
+      <td>18 / 18 passed<div class="layer">star</div></td>
+    </tr>
+    
+    <tr>
+      <td><b>REQ_05</b><div class="muted">Partitioning</div></td>
+      <td>Facts and raw events sit in complete monthly partitions, nothing falls outside the plan, and date filters read only the partitions they need.</td>
+      <td><span class="pill ok">PASSED</span></td>
+      <td>18 / 18 passed<div class="layer">partition</div></td>
+    </tr>
+    
+    <tr>
+      <td><b>REQ_06</b><div class="muted">Controlled schema changes</div></td>
+      <td>Every layer matches a versioned, reviewed contract; breaking changes fail, compatible changes are reported.</td>
+      <td><span class="pill ok">PASSED</span></td>
+      <td>8 / 8 passed<div class="layer">schema</div></td>
+    </tr>
+    
+    <tr>
+      <td><b>REQ_07</b><div class="muted">Incremental loads</div></td>
+      <td>Loading data incrementally gives the same result as a full rebuild, whatever the arrival order, and re-running a load changes nothing.</td>
+      <td><span class="pill ok">PASSED</span></td>
+      <td>26 / 26 passed<div class="layer">edge, incremental</div></td>
+    </tr>
+    
+    <tr>
+      <td><b>REQ_08</b><div class="muted">Proven detection</div></td>
+      <td>Every check is shown to detect the defect it is designed for.</td>
+      <td><span class="pill ok">PASSED</span></td>
+      <td>24 / 24 passed<div class="layer">mutation, pushdown</div></td>
+    </tr>
+    
+    <tr>
+      <td><b>REQ_09</b><div class="muted">Production monitoring</div></td>
+      <td>The live warehouse is checked on a schedule for quality, freshness, volume and drift; results are stored and failures alerted.</td>
+      <td><span class="pill ok">PASSED</span></td>
+      <td>4 / 4 passed<div class="layer">monitoring</div></td>
+    </tr>
+    
+    <tr>
+      <td><b>REQ_10</b><div class="muted">Personal data protection</div></td>
+      <td>No unapproved personal data is stored, and approved personal data is visible only to authorised roles.</td>
+      <td><span class="pill ok">PASSED</span></td>
+      <td>24 / 24 passed<div class="layer">compliance, mutation</div></td>
+    </tr>
+    
+    <tr>
+      <td><b>REQ_11</b><div class="muted">Grounded GenAI output</div></td>
+      <td>Generated safety narratives count exactly, invent nothing, disclose serious events, and the service keeps working when the model does not.</td>
+      <td><span class="pill bad">PARTLY RUN</span></td>
+      <td>27 / 28 passed<div class="layer">genai, genai_scale</div></td>
+    </tr>
+    
+    <tr>
+      <td><b>REQ_12</b><div class="muted">Reproducible test data</div></td>
+      <td>Test data is synthetic, seeded and documented with exact figures.</td>
+      <td><span class="pill ok">PASSED</span></td>
+      <td>3 / 3 passed<div class="layer">data</div></td>
+    </tr>
+    
+    <tr>
+      <td><b>REQ_13</b><div class="muted">Traceable, retained evidence</div></td>
+      <td>Every requirement is traced to the tests that verify it, and each run&#39;s evidence is retained with tamper-evident hashes.</td>
+      <td><span class="pill ok">PASSED</span></td>
+      <td>5 / 5 passed<div class="layer">compliance</div></td>
+    </tr>
+    
+  </table>
+  <div class="muted">Auditor copy: traceability-matrix.csv, one row per requirement and scenario.</div>
+  
+
+  
+  <h2>Reconciliation</h2>
+  <table>
+    <tr><th>Check</th><th>Result</th><th>Source</th><th>Target</th><th>Differences</th></tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/adverse_event_facts.sql on dwh</b><div class="muted"></div><div class="layer">key: ae_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>205</td><td>205</td>
+      <td>
+        <span class="muted">none · 11 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/dim_site_versions.sql on dwh</b><div class="muted"></div><div class="layer">key: site_id, valid_from</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>33</td><td>33</td>
+      <td>
+        <span class="muted">none · 6 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/dim_subject_rows.sql on dwh</b><div class="muted"></div><div class="layer">key: subject_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>120</td><td>120</td>
+      <td>
+        <span class="muted">none · 7 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/history_table.sql on hist for adverse_event</b><div class="muted"></div><div class="layer">key: change_seq</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>381</td><td>381</td>
+      <td>
+        <span class="muted">none · 16 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/history_table.sql on hist for site</b><div class="muted"></div><div class="layer">key: change_seq</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>33</td><td>33</td>
+      <td>
+        <span class="muted">none · 11 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/history_table.sql on hist for study</b><div class="muted"></div><div class="layer">key: change_seq</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>3</td><td>3</td>
+      <td>
+        <span class="muted">none · 12 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/history_table.sql on hist for subject</b><div class="muted"></div><div class="layer">key: change_seq</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>127</td><td>127</td>
+      <td>
+        <span class="muted">none · 14 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/history_table.sql on hist for visit</b><div class="muted"></div><div class="layer">key: change_seq</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>1391</td><td>1391</td>
+      <td>
+        <span class="muted">none · 11 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/latest_table.sql on latest for adverse_event</b><div class="muted"></div><div class="layer">key: ae_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>205</td><td>205</td>
+      <td>
+        <span class="muted">none · 11 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/latest_table.sql on latest for site</b><div class="muted"></div><div class="layer">key: site_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>12</td><td>12</td>
+      <td>
+        <span class="muted">none · 6 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/latest_table.sql on latest for study</b><div class="muted"></div><div class="layer">key: study_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>3</td><td>3</td>
+      <td>
+        <span class="muted">none · 7 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/latest_table.sql on latest for subject</b><div class="muted"></div><div class="layer">key: subject_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>120</td><td>120</td>
+      <td>
+        <span class="muted">none · 9 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/latest_table.sql on latest for visit</b><div class="muted"></div><div class="layer">key: visit_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>701</td><td>701</td>
+      <td>
+        <span class="muted">none · 6 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>full vs incremental: sql/checks/build_compare/visit_facts.sql on dwh</b><div class="muted"></div><div class="layer">key: visit_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>701</td><td>701</td>
+      <td>
+        <span class="muted">none · 5 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/aggregates/safety_totals_by_study</b><div class="muted">Aggregate: adverse events, serious adverse events and grade sum per study</div><div class="layer">key: study_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>3</td><td>3</td>
+      <td>
+        <span class="muted">none · 3 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/aggregates/visits_by_study_month</b><div class="muted">Aggregate: completed visits per study and month</div><div class="layer">key: study_id, year_month</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>48</td><td>48</td>
+      <td>
+        <span class="muted">none · 1 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/dimensions/dim_subject_vs_source</b><div class="muted">Dim_subject holds one row per source subject, with derived age at enrolment and withdrawal flag</div><div class="layer">key: subject_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>120</td><td>120</td>
+      <td>
+        <span class="muted">none · 6 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/facts/fact_adverse_event_vs_source</b><div class="muted">Every current adverse event reaches fact_adverse_event with the right subject, study, term, grade, seriousness, onset date and duration</div><div class="layer">key: ae_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>205</td><td>205</td>
+      <td>
+        <span class="muted">none · 7 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/facts/fact_visit_vs_source</b><div class="muted">Every visit reaches fact_visit with the right subject, date and completion flag</div><div class="layer">key: visit_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>701</td><td>701</td>
+      <td>
+        <span class="muted">none · 4 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/history/hist_current_vs_latest for adverse_event</b><div class="muted">The current-state view hist.v_adverse_event_current equals latest.adverse_event</div><div class="layer">key: ae_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>205</td><td>205</td>
+      <td>
+        <span class="muted">none · 9 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/history/hist_current_vs_latest for site</b><div class="muted">The current-state view hist.v_site_current equals latest.site</div><div class="layer">key: site_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>12</td><td>12</td>
+      <td>
+        <span class="muted">none · 4 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/history/hist_current_vs_latest for study</b><div class="muted">The current-state view hist.v_study_current equals latest.study</div><div class="layer">key: study_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>3</td><td>3</td>
+      <td>
+        <span class="muted">none · 5 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/history/hist_current_vs_latest for subject</b><div class="muted">The current-state view hist.v_subject_current equals latest.subject</div><div class="layer">key: subject_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>120</td><td>120</td>
+      <td>
+        <span class="muted">none · 7 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/history/hist_current_vs_latest for visit</b><div class="muted">The current-state view hist.v_visit_current equals latest.visit</div><div class="layer">key: visit_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>701</td><td>701</td>
+      <td>
+        <span class="muted">none · 4 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/history/hist_vs_raw_changes for adverse_event</b><div class="muted">Every distinct change of adverse_event delivered to raw is kept exactly once in hist.adverse_event_history</div><div class="layer">key: change_seq</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>381</td><td>381</td>
+      <td>
+        <span class="muted">none · 2 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/history/hist_vs_raw_changes for site</b><div class="muted">Every distinct change of site delivered to raw is kept exactly once in hist.site_history</div><div class="layer">key: change_seq</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>33</td><td>33</td>
+      <td>
+        <span class="muted">none · 2 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/history/hist_vs_raw_changes for study</b><div class="muted">Every distinct change of study delivered to raw is kept exactly once in hist.study_history</div><div class="layer">key: change_seq</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>3</td><td>3</td>
+      <td>
+        <span class="muted">none · 2 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/history/hist_vs_raw_changes for subject</b><div class="muted">Every distinct change of subject delivered to raw is kept exactly once in hist.subject_history</div><div class="layer">key: change_seq</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>127</td><td>127</td>
+      <td>
+        <span class="muted">none · 2 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/history/hist_vs_raw_changes for visit</b><div class="muted">Every distinct change of visit delivered to raw is kept exactly once in hist.visit_history</div><div class="layer">key: change_seq</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>1391</td><td>1391</td>
+      <td>
+        <span class="muted">none · 2 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/latest/latest_vs_source for adverse_event</b><div class="muted">Deduplicated latest.adverse_event equals the current state of adverse_event in the source system</div><div class="layer">key: ae_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>205</td><td>205</td>
+      <td>
+        <span class="muted">none · 9 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/latest/latest_vs_source for site</b><div class="muted">Deduplicated latest.site equals the current state of site in the source system</div><div class="layer">key: site_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>12</td><td>12</td>
+      <td>
+        <span class="muted">none · 4 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/latest/latest_vs_source for study</b><div class="muted">Deduplicated latest.study equals the current state of study in the source system</div><div class="layer">key: study_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>3</td><td>3</td>
+      <td>
+        <span class="muted">none · 5 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/latest/latest_vs_source for subject</b><div class="muted">Deduplicated latest.subject equals the current state of subject in the source system</div><div class="layer">key: subject_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>120</td><td>120</td>
+      <td>
+        <span class="muted">none · 7 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/latest/latest_vs_source for visit</b><div class="muted">Deduplicated latest.visit equals the current state of visit in the source system</div><div class="layer">key: visit_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>701</td><td>701</td>
+      <td>
+        <span class="muted">none · 4 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/views/v_adverse_event_detail_vs_source</b><div class="muted">Reporting view v_adverse_event_detail shows every adverse event with the right study, subject, site and clinical attributes</div><div class="layer">key: ae_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>205</td><td>205</td>
+      <td>
+        <span class="muted">none · 14 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/views/v_safety_by_study_month_vs_source</b><div class="muted">Reporting view v_safety_by_study_month equals safety totals per study and month computed from the source system</div><div class="layer">key: study_id, year_month</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>40</td><td>40</td>
+      <td>
+        <span class="muted">none · 4 columns compared</span>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/recon/views/v_site_current_vs_source</b><div class="muted">View v_site_current equals the sites the source system holds today</div><div class="layer">key: site_id</div></td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>12</td><td>12</td>
+      <td>
+        <span class="muted">none · 4 columns compared</span>
+      </td>
+    </tr>
+    
+  </table>
+  
+
+  
+  <h2>Data quality rules</h2>
+  <table>
+    <tr><th>Rule</th><th>Layer</th><th>Result</th><th>Offending rows</th></tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/scd2_no_overlap.sql on dwh.dim_site</b><div class="muted">The versions of one site_id in dim_site form a clean timeline.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: the versions of one site_id in dim_site form a clean timeline. -- Each version must end exactly where the next one starts: no overlap and no gap. A version may be -- empty (valid_from = valid_to) when two changes carry the same timestamp; it never ends before it -- starts. Ties are ordered by valid_to, so an empty version sorts before the one that replaced it. SELECT site_id, valid_from, valid_to, next_valid_from FROM ( SELECT site_id, valid_from, valid_to, LEAD(valid_from) OVER (PARTITION BY site_id ORDER BY valid_from, valid_to) AS next_valid_from FROM dwh.dim_site ) versions WHERE valid_from &gt; valid_to OR (next_valid_from IS NOT NULL AND valid_to &lt;&gt; next_valid_from)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/scd2_point_in_time_site.sql on dwh</b><div class="muted">Each adverse event points at the site version that was valid at 00:00 UTC on its</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: each adverse event points at the site version that was valid at 00:00 UTC on its -- onset date, not simply at the current version of the site. SELECT f.ae_id, f.onset_date, f.site_sk AS loaded_site_sk, expected.site_sk AS expected_site_sk FROM dwh.fact_adverse_event f JOIN dwh.dim_subject ds ON ds.subject_sk = f.subject_sk LEFT JOIN dwh.dim_site expected ON expected.site_id = ds.site_id AND f.onset_date::timestamptz &gt;= expected.valid_from AND f.onset_date::timestamptz &lt; expected.valid_to WHERE expected.site_sk IS DISTINCT FROM f.site_sk</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/scd2_single_current.sql on dwh.dim_site</b><div class="muted">Exactly one current version per site_id in dim_site, and it is the open-ended one.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: exactly one current version per site_id in dim_site, and it is the open-ended one. SELECT site_id, count(*) FILTER (WHERE is_current) AS current_versions, max(valid_to) AS last_valid_to FROM dwh.dim_site GROUP BY site_id HAVING count(*) FILTER (WHERE is_current) &lt;&gt; 1 OR bool_or(is_current AND valid_to &lt;&gt; timestamptz &#39;9999-12-31 00:00:00+00&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.onset_date_key</b><div class="muted">Every fact_adverse_event.onset_date_key has a matching row in dim_date.date_key.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: every fact_adverse_event.onset_date_key has a matching row in dim_date.date_key. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.onset_date_key, count(*) AS orphan_rows FROM dwh.fact_adverse_event f LEFT JOIN dwh.dim_date d ON d.date_key = f.onset_date_key WHERE d.date_key IS NULL GROUP BY f.onset_date_key</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.site_sk</b><div class="muted">Every fact_adverse_event.site_sk has a matching row in dim_site.site_sk.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: every fact_adverse_event.site_sk has a matching row in dim_site.site_sk. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.site_sk, count(*) AS orphan_rows FROM dwh.fact_adverse_event f LEFT JOIN dwh.dim_site d ON d.site_sk = f.site_sk WHERE d.site_sk IS NULL GROUP BY f.site_sk</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.study_sk</b><div class="muted">Every fact_adverse_event.study_sk has a matching row in dim_study.study_sk.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: every fact_adverse_event.study_sk has a matching row in dim_study.study_sk. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.study_sk, count(*) AS orphan_rows FROM dwh.fact_adverse_event f LEFT JOIN dwh.dim_study d ON d.study_sk = f.study_sk WHERE d.study_sk IS NULL GROUP BY f.study_sk</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.subject_sk</b><div class="muted">Every fact_adverse_event.subject_sk has a matching row in dim_subject.subject_sk.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: every fact_adverse_event.subject_sk has a matching row in dim_subject.subject_sk. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.subject_sk, count(*) AS orphan_rows FROM dwh.fact_adverse_event f LEFT JOIN dwh.dim_subject d ON d.subject_sk = f.subject_sk WHERE d.subject_sk IS NULL GROUP BY f.subject_sk</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/referential_integrity.sql on dwh.fact_visit.study_sk</b><div class="muted">Every fact_visit.study_sk has a matching row in dim_study.study_sk.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: every fact_visit.study_sk has a matching row in dim_study.study_sk. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.study_sk, count(*) AS orphan_rows FROM dwh.fact_visit f LEFT JOIN dwh.dim_study d ON d.study_sk = f.study_sk WHERE d.study_sk IS NULL GROUP BY f.study_sk</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/referential_integrity.sql on dwh.fact_visit.subject_sk</b><div class="muted">Every fact_visit.subject_sk has a matching row in dim_subject.subject_sk.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: every fact_visit.subject_sk has a matching row in dim_subject.subject_sk. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.subject_sk, count(*) AS orphan_rows FROM dwh.fact_visit f LEFT JOIN dwh.dim_subject d ON d.subject_sk = f.subject_sk WHERE d.subject_sk IS NULL GROUP BY f.subject_sk</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/referential_integrity.sql on dwh.fact_visit.visit_date_key</b><div class="muted">Every fact_visit.visit_date_key has a matching row in dim_date.date_key.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: every fact_visit.visit_date_key has a matching row in dim_date.date_key. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.visit_date_key, count(*) AS orphan_rows FROM dwh.fact_visit f LEFT JOIN dwh.dim_date d ON d.date_key = f.visit_date_key WHERE d.date_key IS NULL GROUP BY f.visit_date_key</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on dwh.dim_site (site_id, valid_from)</b><div class="muted">(site_id, valid_from) identifies exactly one row in dim_site.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (site_id, valid_from) identifies exactly one row in dim_site. -- Returns every key that appears more than once, with the number of copies. SELECT site_id, valid_from, count(*) AS copies FROM dwh.dim_site GROUP BY site_id, valid_from HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on dwh.dim_study (study_id)</b><div class="muted">(study_id) identifies exactly one row in dim_study.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (study_id) identifies exactly one row in dim_study. -- Returns every key that appears more than once, with the number of copies. SELECT study_id, count(*) AS copies FROM dwh.dim_study GROUP BY study_id HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on dwh.dim_subject (subject_id)</b><div class="muted">(subject_id) identifies exactly one row in dim_subject.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (subject_id) identifies exactly one row in dim_subject. -- Returns every key that appears more than once, with the number of copies. SELECT subject_id, count(*) AS copies FROM dwh.dim_subject GROUP BY subject_id HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on dwh.fact_adverse_event (ae_id)</b><div class="muted">(ae_id) identifies exactly one row in fact_adverse_event.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (ae_id) identifies exactly one row in fact_adverse_event. -- Returns every key that appears more than once, with the number of copies. SELECT ae_id, count(*) AS copies FROM dwh.fact_adverse_event GROUP BY ae_id HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on dwh.fact_visit (visit_id)</b><div class="muted">(visit_id) identifies exactly one row in fact_visit.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (visit_id) identifies exactly one row in fact_visit. -- Returns every key that appears more than once, with the number of copies. SELECT visit_id, count(*) AS copies FROM dwh.fact_visit GROUP BY visit_id HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on dwh.v_adverse_event_detail (ae_id)</b><div class="muted">(ae_id) identifies exactly one row in v_adverse_event_detail.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (ae_id) identifies exactly one row in v_adverse_event_detail. -- Returns every key that appears more than once, with the number of copies. SELECT ae_id, count(*) AS copies FROM dwh.v_adverse_event_detail GROUP BY ae_id HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on dwh.v_safety_by_study_month (study_id, year_month)</b><div class="muted">(study_id, year_month) identifies exactly one row in v_safety_by_study_month.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (study_id, year_month) identifies exactly one row in v_safety_by_study_month. -- Returns every key that appears more than once, with the number of copies. SELECT study_id, year_month, count(*) AS copies FROM dwh.v_safety_by_study_month GROUP BY study_id, year_month HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/date_key_matches_partition_date.sql on dwh.fact_adverse_event</b><div class="muted">In fact_adverse_event, the date key and the partition date describe the same day.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: in fact_adverse_event, the date key and the partition date describe the same day. SELECT onset_date, onset_date_key FROM dwh.fact_adverse_event WHERE onset_date_key &lt;&gt; to_char(onset_date, &#39;YYYYMMDD&#39;)::int</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/date_key_matches_partition_date.sql on dwh.fact_visit</b><div class="muted">In fact_visit, the date key and the partition date describe the same day.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: in fact_visit, the date key and the partition date describe the same day. SELECT visit_date, visit_date_key FROM dwh.fact_visit WHERE visit_date_key &lt;&gt; to_char(visit_date, &#39;YYYYMMDD&#39;)::int</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/default_partition_empty.sql on dwh.fact_adverse_event</b><div class="muted">No row of fact_adverse_event falls outside the planned monthly partitions.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: no row of fact_adverse_event falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM dwh.fact_adverse_event_default</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/default_partition_empty.sql on dwh.fact_visit</b><div class="muted">No row of fact_visit falls outside the planned monthly partitions.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: no row of fact_visit falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM dwh.fact_visit_default</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/partition_plan.sql on dwh.fact_adverse_event</b><div class="muted">Fact_adverse_event has one partition per month from 2025-01-01 to 2026-12-01, each exactly one</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: fact_adverse_event has one partition per month from 2025-01-01 to 2026-12-01, each exactly one -- calendar month wide, named &lt;table&gt;_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = &#39;dwh&#39; AND p.relname = &#39;fact_adverse_event&#39; ), ranges AS ( SELECT partition_name, substring(bound FROM &#39;FROM \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS lower_bound, substring(bound FROM &#39;TO \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS upper_bound FROM parts WHERE bound &lt;&gt; &#39;DEFAULT&#39; ), expected AS ( SELECT m::date AS month FROM generate_series(date &#39;2025-01-01&#39;, date &#39;2026-12-01&#39;, interval &#39;1 month&#39;) AS m ) SELECT e.month AS month, NULL::text AS partition_name, &#39;missing partition&#39; AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, &#39;not exactly one calendar month&#39; FROM ranges r WHERE extract(DAY FROM r.lower_bound) &lt;&gt; 1 OR r.upper_bound &lt;&gt; (r.lower_bound + interval &#39;1 month&#39;)::date UNION ALL SELECT r.lower_bound, r.partition_name, &#39;name does not match its bounds&#39; FROM ranges r WHERE r.partition_name &lt;&gt; &#39;fact_adverse_event_&#39; || to_char(r.lower_bound, &#39;YYYYMM&#39;) UNION ALL SELECT NULL, NULL, &#39;no DEFAULT partition&#39; WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = &#39;DEFAULT&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/partition_plan.sql on dwh.fact_visit</b><div class="muted">Fact_visit has one partition per month from 2025-01-01 to 2026-12-01, each exactly one</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: fact_visit has one partition per month from 2025-01-01 to 2026-12-01, each exactly one -- calendar month wide, named &lt;table&gt;_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = &#39;dwh&#39; AND p.relname = &#39;fact_visit&#39; ), ranges AS ( SELECT partition_name, substring(bound FROM &#39;FROM \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS lower_bound, substring(bound FROM &#39;TO \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS upper_bound FROM parts WHERE bound &lt;&gt; &#39;DEFAULT&#39; ), expected AS ( SELECT m::date AS month FROM generate_series(date &#39;2025-01-01&#39;, date &#39;2026-12-01&#39;, interval &#39;1 month&#39;) AS m ) SELECT e.month AS month, NULL::text AS partition_name, &#39;missing partition&#39; AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, &#39;not exactly one calendar month&#39; FROM ranges r WHERE extract(DAY FROM r.lower_bound) &lt;&gt; 1 OR r.upper_bound &lt;&gt; (r.lower_bound + interval &#39;1 month&#39;)::date UNION ALL SELECT r.lower_bound, r.partition_name, &#39;name does not match its bounds&#39; FROM ranges r WHERE r.partition_name &lt;&gt; &#39;fact_visit_&#39; || to_char(r.lower_bound, &#39;YYYYMM&#39;) UNION ALL SELECT NULL, NULL, &#39;no DEFAULT partition&#39; WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = &#39;DEFAULT&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/privacy/personal_data_columns.sql on dwh</b><div class="muted">No column in {schema} has a name that suggests personal data (birth, email, phone, address, national id, name...) unless it is on the approved list (&#39;dim_site.investigator&#39;, &#39;v_site_current.investigator&#39;, &#39;v_adverse_event_detail.investigator_at_onset&#39;).</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: no column in dwh has a name that suggests personal data (birth, email, phone, address, national id, name...) unless it is on the approved list (&#39;dim_site.investigator&#39;, &#39;v_site_current.investigator&#39;, &#39;v_adverse_event_detail.investigator_at_onset&#39;). SELECT c.table_name, c.column_name FROM information_schema.columns c WHERE c.table_schema = &#39;dwh&#39; AND c.column_name ~* &#39;(birth|dob|e_?mail|phone|mobile|address|street|zip|postcode|national_id|cnp|ssn|passport|first_?name|last_?name|surname|initials|investigator)&#39; AND c.table_name || &#39;.&#39; || c.column_name NOT IN (&#39;dim_site.investigator&#39;, &#39;v_site_current.investigator&#39;, &#39;v_adverse_event_detail.investigator_at_onset&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/privacy/personal_data_values.sql on dwh</b><div class="muted">No text value anywhere in {schema} looks like an e-mail address, a phone number or a Romanian national ID (CNP). Scans every text column of every table and view.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: no text value anywhere in dwh looks like an e-mail address, a phone number or a Romanian national ID (CNP). Scans every text column of every table and view. SELECT table_name, column_name, matches FROM ( SELECT c.table_name, c.column_name, (xpath(&#39;/row/n/text()&#39;, query_to_xml(format( &#39;SELECT count(*) AS n FROM %I.%I WHERE %I ~ %L&#39;, c.table_schema, c.table_name, c.column_name, &#39;([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}|\+?[0-9][0-9 ()-]{8,}[0-9]|\m[1-8][0-9]{12}\M)&#39; ), false, true, &#39;&#39;)))[1]::text::int AS matches FROM information_schema.columns c WHERE c.table_schema = &#39;dwh&#39; AND c.data_type IN (&#39;text&#39;, &#39;character varying&#39;, &#39;character&#39;) ) scanned WHERE matches &gt; 0</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/values/accepted_values.sql on dwh.dim_subject.arm</b><div class="muted">Dim_subject.arm only holds values from the agreed list.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: dim_subject.arm only holds values from the agreed list. SELECT arm, count(*) AS rows_with_value FROM dwh.dim_subject WHERE arm IS NULL OR arm NOT IN (&#39;PLACEBO&#39;, &#39;DOSE_LOW&#39;, &#39;DOSE_HIGH&#39;) GROUP BY arm</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/values/accepted_values.sql on dwh.fact_adverse_event.grade</b><div class="muted">Fact_adverse_event.grade only holds values from the agreed list.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: fact_adverse_event.grade only holds values from the agreed list. SELECT grade, count(*) AS rows_with_value FROM dwh.fact_adverse_event WHERE grade IS NULL OR grade NOT IN (1, 2, 3, 4, 5) GROUP BY grade</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/values/not_null.sql on dwh.fact_adverse_event</b><div class="muted">Mandatory columns of fact_adverse_event are always filled.</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: mandatory columns of fact_adverse_event are always filled. -- meddra_pt IS NULL OR soc IS NULL OR grade IS NULL OR onset_date IS NULL is &#34;col_a IS NULL OR col_b IS NULL ...&#34;, built from the column list. SELECT * FROM dwh.fact_adverse_event WHERE meddra_pt IS NULL OR soc IS NULL OR grade IS NULL OR onset_date IS NULL</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/contracts/dwh.json</b><div class="muted">The dwh layer has no breaking change against contract v1.0.0 (compatible changes are reported; next version would be 1.0.0)</div></td>
+      <td class="layer">dwh</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>sql/checks/schema/columns.sql + sql/checks/schema/partition_keys.sql</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/scd2_no_overlap.sql on hist.adverse_event_history</b><div class="muted">The versions of one ae_id in adverse_event_history form a clean timeline.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: the versions of one ae_id in adverse_event_history form a clean timeline. -- Each version must end exactly where the next one starts: no overlap and no gap. A version may be -- empty (valid_from = valid_to) when two changes carry the same timestamp; it never ends before it -- starts. Ties are ordered by valid_to, so an empty version sorts before the one that replaced it. SELECT ae_id, valid_from, valid_to, next_valid_from FROM ( SELECT ae_id, valid_from, valid_to, LEAD(valid_from) OVER (PARTITION BY ae_id ORDER BY valid_from, valid_to) AS next_valid_from FROM hist.adverse_event_history ) versions WHERE valid_from &gt; valid_to OR (next_valid_from IS NOT NULL AND valid_to &lt;&gt; next_valid_from)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/scd2_no_overlap.sql on hist.site_history</b><div class="muted">The versions of one site_id in site_history form a clean timeline.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: the versions of one site_id in site_history form a clean timeline. -- Each version must end exactly where the next one starts: no overlap and no gap. A version may be -- empty (valid_from = valid_to) when two changes carry the same timestamp; it never ends before it -- starts. Ties are ordered by valid_to, so an empty version sorts before the one that replaced it. SELECT site_id, valid_from, valid_to, next_valid_from FROM ( SELECT site_id, valid_from, valid_to, LEAD(valid_from) OVER (PARTITION BY site_id ORDER BY valid_from, valid_to) AS next_valid_from FROM hist.site_history ) versions WHERE valid_from &gt; valid_to OR (next_valid_from IS NOT NULL AND valid_to &lt;&gt; next_valid_from)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/scd2_no_overlap.sql on hist.study_history</b><div class="muted">The versions of one study_id in study_history form a clean timeline.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: the versions of one study_id in study_history form a clean timeline. -- Each version must end exactly where the next one starts: no overlap and no gap. A version may be -- empty (valid_from = valid_to) when two changes carry the same timestamp; it never ends before it -- starts. Ties are ordered by valid_to, so an empty version sorts before the one that replaced it. SELECT study_id, valid_from, valid_to, next_valid_from FROM ( SELECT study_id, valid_from, valid_to, LEAD(valid_from) OVER (PARTITION BY study_id ORDER BY valid_from, valid_to) AS next_valid_from FROM hist.study_history ) versions WHERE valid_from &gt; valid_to OR (next_valid_from IS NOT NULL AND valid_to &lt;&gt; next_valid_from)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/scd2_no_overlap.sql on hist.subject_history</b><div class="muted">The versions of one subject_id in subject_history form a clean timeline.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: the versions of one subject_id in subject_history form a clean timeline. -- Each version must end exactly where the next one starts: no overlap and no gap. A version may be -- empty (valid_from = valid_to) when two changes carry the same timestamp; it never ends before it -- starts. Ties are ordered by valid_to, so an empty version sorts before the one that replaced it. SELECT subject_id, valid_from, valid_to, next_valid_from FROM ( SELECT subject_id, valid_from, valid_to, LEAD(valid_from) OVER (PARTITION BY subject_id ORDER BY valid_from, valid_to) AS next_valid_from FROM hist.subject_history ) versions WHERE valid_from &gt; valid_to OR (next_valid_from IS NOT NULL AND valid_to &lt;&gt; next_valid_from)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/scd2_no_overlap.sql on hist.visit_history</b><div class="muted">The versions of one visit_id in visit_history form a clean timeline.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: the versions of one visit_id in visit_history form a clean timeline. -- Each version must end exactly where the next one starts: no overlap and no gap. A version may be -- empty (valid_from = valid_to) when two changes carry the same timestamp; it never ends before it -- starts. Ties are ordered by valid_to, so an empty version sorts before the one that replaced it. SELECT visit_id, valid_from, valid_to, next_valid_from FROM ( SELECT visit_id, valid_from, valid_to, LEAD(valid_from) OVER (PARTITION BY visit_id ORDER BY valid_from, valid_to) AS next_valid_from FROM hist.visit_history ) versions WHERE valid_from &gt; valid_to OR (next_valid_from IS NOT NULL AND valid_to &lt;&gt; next_valid_from)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/scd2_single_current.sql on hist.adverse_event_history</b><div class="muted">Exactly one current version per ae_id in adverse_event_history, and it is the open-ended one.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: exactly one current version per ae_id in adverse_event_history, and it is the open-ended one. SELECT ae_id, count(*) FILTER (WHERE is_current) AS current_versions, max(valid_to) AS last_valid_to FROM hist.adverse_event_history GROUP BY ae_id HAVING count(*) FILTER (WHERE is_current) &lt;&gt; 1 OR bool_or(is_current AND valid_to &lt;&gt; timestamptz &#39;9999-12-31 00:00:00+00&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/scd2_single_current.sql on hist.site_history</b><div class="muted">Exactly one current version per site_id in site_history, and it is the open-ended one.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: exactly one current version per site_id in site_history, and it is the open-ended one. SELECT site_id, count(*) FILTER (WHERE is_current) AS current_versions, max(valid_to) AS last_valid_to FROM hist.site_history GROUP BY site_id HAVING count(*) FILTER (WHERE is_current) &lt;&gt; 1 OR bool_or(is_current AND valid_to &lt;&gt; timestamptz &#39;9999-12-31 00:00:00+00&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/scd2_single_current.sql on hist.study_history</b><div class="muted">Exactly one current version per study_id in study_history, and it is the open-ended one.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: exactly one current version per study_id in study_history, and it is the open-ended one. SELECT study_id, count(*) FILTER (WHERE is_current) AS current_versions, max(valid_to) AS last_valid_to FROM hist.study_history GROUP BY study_id HAVING count(*) FILTER (WHERE is_current) &lt;&gt; 1 OR bool_or(is_current AND valid_to &lt;&gt; timestamptz &#39;9999-12-31 00:00:00+00&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/scd2_single_current.sql on hist.subject_history</b><div class="muted">Exactly one current version per subject_id in subject_history, and it is the open-ended one.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: exactly one current version per subject_id in subject_history, and it is the open-ended one. SELECT subject_id, count(*) FILTER (WHERE is_current) AS current_versions, max(valid_to) AS last_valid_to FROM hist.subject_history GROUP BY subject_id HAVING count(*) FILTER (WHERE is_current) &lt;&gt; 1 OR bool_or(is_current AND valid_to &lt;&gt; timestamptz &#39;9999-12-31 00:00:00+00&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/scd2_single_current.sql on hist.visit_history</b><div class="muted">Exactly one current version per visit_id in visit_history, and it is the open-ended one.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: exactly one current version per visit_id in visit_history, and it is the open-ended one. SELECT visit_id, count(*) FILTER (WHERE is_current) AS current_versions, max(valid_to) AS last_valid_to FROM hist.visit_history GROUP BY visit_id HAVING count(*) FILTER (WHERE is_current) &lt;&gt; 1 OR bool_or(is_current AND valid_to &lt;&gt; timestamptz &#39;9999-12-31 00:00:00+00&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on hist.adverse_event_history (change_seq)</b><div class="muted">(change_seq) identifies exactly one row in adverse_event_history.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (change_seq) identifies exactly one row in adverse_event_history. -- Returns every key that appears more than once, with the number of copies. SELECT change_seq, count(*) AS copies FROM hist.adverse_event_history GROUP BY change_seq HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on hist.site_history (change_seq)</b><div class="muted">(change_seq) identifies exactly one row in site_history.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (change_seq) identifies exactly one row in site_history. -- Returns every key that appears more than once, with the number of copies. SELECT change_seq, count(*) AS copies FROM hist.site_history GROUP BY change_seq HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on hist.study_history (change_seq)</b><div class="muted">(change_seq) identifies exactly one row in study_history.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (change_seq) identifies exactly one row in study_history. -- Returns every key that appears more than once, with the number of copies. SELECT change_seq, count(*) AS copies FROM hist.study_history GROUP BY change_seq HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on hist.subject_history (change_seq)</b><div class="muted">(change_seq) identifies exactly one row in subject_history.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (change_seq) identifies exactly one row in subject_history. -- Returns every key that appears more than once, with the number of copies. SELECT change_seq, count(*) AS copies FROM hist.subject_history GROUP BY change_seq HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on hist.visit_history (change_seq)</b><div class="muted">(change_seq) identifies exactly one row in visit_history.</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (change_seq) identifies exactly one row in visit_history. -- Returns every key that appears more than once, with the number of copies. SELECT change_seq, count(*) AS copies FROM hist.visit_history GROUP BY change_seq HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/contracts/hist.json</b><div class="muted">The hist layer has no breaking change against contract v1.0.0 (compatible changes are reported; next version would be 1.0.0)</div></td>
+      <td class="layer">hist</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>sql/checks/schema/columns.sql + sql/checks/schema/partition_keys.sql</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/deletes_applied.sql on latest.adverse_event</b><div class="muted">A adverse_event whose last change was a delete is absent from the latest layer.</div></td>
+      <td class="layer">latest</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: a adverse_event whose last change was a delete is absent from the latest layer. SELECT l.ae_id, h.change_seq AS delete_change_seq, h.valid_from AS deleted_at FROM latest.adverse_event l JOIN hist.adverse_event_history h ON h.ae_id = l.ae_id AND h.is_current AND h.is_deleted</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/deletes_applied.sql on latest.site</b><div class="muted">A site whose last change was a delete is absent from the latest layer.</div></td>
+      <td class="layer">latest</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: a site whose last change was a delete is absent from the latest layer. SELECT l.site_id, h.change_seq AS delete_change_seq, h.valid_from AS deleted_at FROM latest.site l JOIN hist.site_history h ON h.site_id = l.site_id AND h.is_current AND h.is_deleted</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/deletes_applied.sql on latest.study</b><div class="muted">A study whose last change was a delete is absent from the latest layer.</div></td>
+      <td class="layer">latest</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: a study whose last change was a delete is absent from the latest layer. SELECT l.study_id, h.change_seq AS delete_change_seq, h.valid_from AS deleted_at FROM latest.study l JOIN hist.study_history h ON h.study_id = l.study_id AND h.is_current AND h.is_deleted</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/deletes_applied.sql on latest.subject</b><div class="muted">A subject whose last change was a delete is absent from the latest layer.</div></td>
+      <td class="layer">latest</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: a subject whose last change was a delete is absent from the latest layer. SELECT l.subject_id, h.change_seq AS delete_change_seq, h.valid_from AS deleted_at FROM latest.subject l JOIN hist.subject_history h ON h.subject_id = l.subject_id AND h.is_current AND h.is_deleted</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/history/deletes_applied.sql on latest.visit</b><div class="muted">A visit whose last change was a delete is absent from the latest layer.</div></td>
+      <td class="layer">latest</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: a visit whose last change was a delete is absent from the latest layer. SELECT l.visit_id, h.change_seq AS delete_change_seq, h.valid_from AS deleted_at FROM latest.visit l JOIN hist.visit_history h ON h.visit_id = l.visit_id AND h.is_current AND h.is_deleted</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on latest.adverse_event (ae_id)</b><div class="muted">(ae_id) identifies exactly one row in adverse_event.</div></td>
+      <td class="layer">latest</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (ae_id) identifies exactly one row in adverse_event. -- Returns every key that appears more than once, with the number of copies. SELECT ae_id, count(*) AS copies FROM latest.adverse_event GROUP BY ae_id HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on latest.site (site_id)</b><div class="muted">(site_id) identifies exactly one row in site.</div></td>
+      <td class="layer">latest</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (site_id) identifies exactly one row in site. -- Returns every key that appears more than once, with the number of copies. SELECT site_id, count(*) AS copies FROM latest.site GROUP BY site_id HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on latest.study (study_id)</b><div class="muted">(study_id) identifies exactly one row in study.</div></td>
+      <td class="layer">latest</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (study_id) identifies exactly one row in study. -- Returns every key that appears more than once, with the number of copies. SELECT study_id, count(*) AS copies FROM latest.study GROUP BY study_id HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on latest.subject (subject_id)</b><div class="muted">(subject_id) identifies exactly one row in subject.</div></td>
+      <td class="layer">latest</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (subject_id) identifies exactly one row in subject. -- Returns every key that appears more than once, with the number of copies. SELECT subject_id, count(*) AS copies FROM latest.subject GROUP BY subject_id HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/keys/unique.sql on latest.visit (visit_id)</b><div class="muted">(visit_id) identifies exactly one row in visit.</div></td>
+      <td class="layer">latest</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: (visit_id) identifies exactly one row in visit. -- Returns every key that appears more than once, with the number of copies. SELECT visit_id, count(*) AS copies FROM latest.visit GROUP BY visit_id HAVING count(*) &gt; 1</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/contracts/latest.json</b><div class="muted">The latest layer has no breaking change against contract v1.0.0 (compatible changes are reported; next version would be 1.0.0)</div></td>
+      <td class="layer">latest</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>sql/checks/schema/columns.sql + sql/checks/schema/partition_keys.sql</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/default_partition_empty.sql on raw.adverse_event_events</b><div class="muted">No row of adverse_event_events falls outside the planned monthly partitions.</div></td>
+      <td class="layer">raw</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: no row of adverse_event_events falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM raw.adverse_event_events_default</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/default_partition_empty.sql on raw.site_events</b><div class="muted">No row of site_events falls outside the planned monthly partitions.</div></td>
+      <td class="layer">raw</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: no row of site_events falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM raw.site_events_default</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/default_partition_empty.sql on raw.study_events</b><div class="muted">No row of study_events falls outside the planned monthly partitions.</div></td>
+      <td class="layer">raw</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: no row of study_events falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM raw.study_events_default</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/default_partition_empty.sql on raw.subject_events</b><div class="muted">No row of subject_events falls outside the planned monthly partitions.</div></td>
+      <td class="layer">raw</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: no row of subject_events falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM raw.subject_events_default</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/default_partition_empty.sql on raw.visit_events</b><div class="muted">No row of visit_events falls outside the planned monthly partitions.</div></td>
+      <td class="layer">raw</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: no row of visit_events falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM raw.visit_events_default</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/partition_plan.sql on raw.adverse_event_events</b><div class="muted">Adverse_event_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one</div></td>
+      <td class="layer">raw</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: adverse_event_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one -- calendar month wide, named &lt;table&gt;_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = &#39;raw&#39; AND p.relname = &#39;adverse_event_events&#39; ), ranges AS ( SELECT partition_name, substring(bound FROM &#39;FROM \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS lower_bound, substring(bound FROM &#39;TO \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS upper_bound FROM parts WHERE bound &lt;&gt; &#39;DEFAULT&#39; ), expected AS ( SELECT m::date AS month FROM generate_series(date &#39;2024-12-01&#39;, date &#39;2026-12-01&#39;, interval &#39;1 month&#39;) AS m ) SELECT e.month AS month, NULL::text AS partition_name, &#39;missing partition&#39; AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, &#39;not exactly one calendar month&#39; FROM ranges r WHERE extract(DAY FROM r.lower_bound) &lt;&gt; 1 OR r.upper_bound &lt;&gt; (r.lower_bound + interval &#39;1 month&#39;)::date UNION ALL SELECT r.lower_bound, r.partition_name, &#39;name does not match its bounds&#39; FROM ranges r WHERE r.partition_name &lt;&gt; &#39;adverse_event_events_&#39; || to_char(r.lower_bound, &#39;YYYYMM&#39;) UNION ALL SELECT NULL, NULL, &#39;no DEFAULT partition&#39; WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = &#39;DEFAULT&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/partition_plan.sql on raw.site_events</b><div class="muted">Site_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one</div></td>
+      <td class="layer">raw</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: site_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one -- calendar month wide, named &lt;table&gt;_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = &#39;raw&#39; AND p.relname = &#39;site_events&#39; ), ranges AS ( SELECT partition_name, substring(bound FROM &#39;FROM \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS lower_bound, substring(bound FROM &#39;TO \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS upper_bound FROM parts WHERE bound &lt;&gt; &#39;DEFAULT&#39; ), expected AS ( SELECT m::date AS month FROM generate_series(date &#39;2024-12-01&#39;, date &#39;2026-12-01&#39;, interval &#39;1 month&#39;) AS m ) SELECT e.month AS month, NULL::text AS partition_name, &#39;missing partition&#39; AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, &#39;not exactly one calendar month&#39; FROM ranges r WHERE extract(DAY FROM r.lower_bound) &lt;&gt; 1 OR r.upper_bound &lt;&gt; (r.lower_bound + interval &#39;1 month&#39;)::date UNION ALL SELECT r.lower_bound, r.partition_name, &#39;name does not match its bounds&#39; FROM ranges r WHERE r.partition_name &lt;&gt; &#39;site_events_&#39; || to_char(r.lower_bound, &#39;YYYYMM&#39;) UNION ALL SELECT NULL, NULL, &#39;no DEFAULT partition&#39; WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = &#39;DEFAULT&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/partition_plan.sql on raw.study_events</b><div class="muted">Study_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one</div></td>
+      <td class="layer">raw</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: study_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one -- calendar month wide, named &lt;table&gt;_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = &#39;raw&#39; AND p.relname = &#39;study_events&#39; ), ranges AS ( SELECT partition_name, substring(bound FROM &#39;FROM \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS lower_bound, substring(bound FROM &#39;TO \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS upper_bound FROM parts WHERE bound &lt;&gt; &#39;DEFAULT&#39; ), expected AS ( SELECT m::date AS month FROM generate_series(date &#39;2024-12-01&#39;, date &#39;2026-12-01&#39;, interval &#39;1 month&#39;) AS m ) SELECT e.month AS month, NULL::text AS partition_name, &#39;missing partition&#39; AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, &#39;not exactly one calendar month&#39; FROM ranges r WHERE extract(DAY FROM r.lower_bound) &lt;&gt; 1 OR r.upper_bound &lt;&gt; (r.lower_bound + interval &#39;1 month&#39;)::date UNION ALL SELECT r.lower_bound, r.partition_name, &#39;name does not match its bounds&#39; FROM ranges r WHERE r.partition_name &lt;&gt; &#39;study_events_&#39; || to_char(r.lower_bound, &#39;YYYYMM&#39;) UNION ALL SELECT NULL, NULL, &#39;no DEFAULT partition&#39; WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = &#39;DEFAULT&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/partition_plan.sql on raw.subject_events</b><div class="muted">Subject_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one</div></td>
+      <td class="layer">raw</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: subject_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one -- calendar month wide, named &lt;table&gt;_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = &#39;raw&#39; AND p.relname = &#39;subject_events&#39; ), ranges AS ( SELECT partition_name, substring(bound FROM &#39;FROM \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS lower_bound, substring(bound FROM &#39;TO \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS upper_bound FROM parts WHERE bound &lt;&gt; &#39;DEFAULT&#39; ), expected AS ( SELECT m::date AS month FROM generate_series(date &#39;2024-12-01&#39;, date &#39;2026-12-01&#39;, interval &#39;1 month&#39;) AS m ) SELECT e.month AS month, NULL::text AS partition_name, &#39;missing partition&#39; AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, &#39;not exactly one calendar month&#39; FROM ranges r WHERE extract(DAY FROM r.lower_bound) &lt;&gt; 1 OR r.upper_bound &lt;&gt; (r.lower_bound + interval &#39;1 month&#39;)::date UNION ALL SELECT r.lower_bound, r.partition_name, &#39;name does not match its bounds&#39; FROM ranges r WHERE r.partition_name &lt;&gt; &#39;subject_events_&#39; || to_char(r.lower_bound, &#39;YYYYMM&#39;) UNION ALL SELECT NULL, NULL, &#39;no DEFAULT partition&#39; WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = &#39;DEFAULT&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/checks/rules/partitions/partition_plan.sql on raw.visit_events</b><div class="muted">Visit_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one</div></td>
+      <td class="layer">raw</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td>0
+        <details><summary>SQL</summary><pre>-- Rule: visit_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one -- calendar month wide, named &lt;table&gt;_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = &#39;raw&#39; AND p.relname = &#39;visit_events&#39; ), ranges AS ( SELECT partition_name, substring(bound FROM &#39;FROM \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS lower_bound, substring(bound FROM &#39;TO \(&#39;&#39;([^&#39;&#39;]+)&#39;&#39;\)&#39;)::date AS upper_bound FROM parts WHERE bound &lt;&gt; &#39;DEFAULT&#39; ), expected AS ( SELECT m::date AS month FROM generate_series(date &#39;2024-12-01&#39;, date &#39;2026-12-01&#39;, interval &#39;1 month&#39;) AS m ) SELECT e.month AS month, NULL::text AS partition_name, &#39;missing partition&#39; AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, &#39;not exactly one calendar month&#39; FROM ranges r WHERE extract(DAY FROM r.lower_bound) &lt;&gt; 1 OR r.upper_bound &lt;&gt; (r.lower_bound + interval &#39;1 month&#39;)::date UNION ALL SELECT r.lower_bound, r.partition_name, &#39;name does not match its bounds&#39; FROM ranges r WHERE r.partition_name &lt;&gt; &#39;visit_events_&#39; || to_char(r.lower_bound, &#39;YYYYMM&#39;) UNION ALL SELECT NULL, NULL, &#39;no DEFAULT partition&#39; WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = &#39;DEFAULT&#39;)</pre>
+        </details>
+      </td>
+    </tr>
+    
+  </table>
+  
+
+  
+  <h2>Defect injection (do the checks catch real bugs?)</h2>
+  <table>
+    <tr><th>Injected defect</th><th>Expected to be caught by</th><th>Result</th><th>Everything that fired</th></tr>
+    
+    <tr>
+      <td><b>sql/defects/facts/wrong_site_version.sql</b><div class="muted">Facts were joined to the current site version instead of the version valid at onset</div></td>
+      <td><code>sql/checks/rules/history/scd2_point_in_time_site.sql on dwh</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/rules/history/scd2_point_in_time_site.sql on dwh</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/views/view_joins_site_by_natural_key.sql</b><div class="muted">The monthly safety view joined the SCD2 site dimension on site_id instead of site_sk, fanning out rows</div></td>
+      <td><code>sql/checks/recon/views/v_safety_by_study_month_vs_source</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/recon/views/v_safety_by_study_month_vs_source</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/dimensions/two_current_site_versions.sql</b><div class="muted">The is_current flag was not reset when a newer site version arrived</div></td>
+      <td><code>sql/checks/rules/history/scd2_single_current.sql on dwh.dim_site</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/recon/views/v_site_current_vs_source</code></div><div><code>sql/checks/rules/history/scd2_single_current.sql on dwh.dim_site</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/schema/column_type_changed.sql</b><div class="muted">A migration changed a numeric column to text, which breaks sorting and aggregation downstream</div></td>
+      <td><code>sql/contracts/dwh.json</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/contracts/dwh.json</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/facts/lost_serious_flag.sql</b><div class="muted">A boolean cast turned some serious events into non-serious ones</div></td>
+      <td><code>sql/checks/recon/aggregates/safety_totals_by_study</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/recon/aggregates/safety_totals_by_study</code></div><div><code>sql/checks/recon/facts/fact_adverse_event_vs_source</code></div><div><code>sql/checks/recon/views/v_adverse_event_detail_vs_source</code></div><div><code>sql/checks/recon/views/v_safety_by_study_month_vs_source</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/history/history_overlap.sql</b><div class="muted">An SCD2 job forgot to close the previous version before opening the next</div></td>
+      <td><code>sql/checks/rules/history/scd2_no_overlap.sql on hist.site_history</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/rules/history/scd2_no_overlap.sql on hist.site_history</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/facts/dropped_fact_rows.sql</b><div class="muted">An inner join on a stale dimension silently dropped facts</div></td>
+      <td><code>sql/checks/recon/facts/fact_adverse_event_vs_source</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/recon/aggregates/safety_totals_by_study</code></div><div><code>sql/checks/recon/facts/fact_adverse_event_vs_source</code></div><div><code>sql/checks/recon/views/v_adverse_event_detail_vs_source</code></div><div><code>sql/checks/recon/views/v_safety_by_study_month_vs_source</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/partitions/missing_partition.sql</b><div class="muted">A maintenance job detached a monthly partition and never re-attached it</div></td>
+      <td><code>sql/checks/rules/partitions/partition_plan.sql on dwh.fact_adverse_event</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/recon/aggregates/safety_totals_by_study</code></div><div><code>sql/checks/recon/facts/fact_adverse_event_vs_source</code></div><div><code>sql/checks/recon/views/v_adverse_event_detail_vs_source</code></div><div><code>sql/checks/recon/views/v_safety_by_study_month_vs_source</code></div><div><code>sql/checks/rules/partitions/partition_plan.sql on dwh.fact_adverse_event</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/latest/stale_latest_version.sql</b><div class="muted">Dedup ordered by ingestion time instead of change_seq, so an older version won</div></td>
+      <td><code>sql/checks/recon/latest/latest_vs_source for adverse_event</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/recon/history/hist_current_vs_latest for adverse_event</code></div><div><code>sql/checks/recon/latest/latest_vs_source for adverse_event</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/facts/orphan_fact.sql</b><div class="muted">A fact row was loaded before its dimension row existed (late-arriving dimension)</div></td>
+      <td><code>sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.subject_sk</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/recon/facts/fact_adverse_event_vs_source</code></div><div><code>sql/checks/recon/views/v_adverse_event_detail_vs_source</code></div><div><code>sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.subject_sk</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/schema/dropped_column.sql</b><div class="muted">A refactoring dropped a column that downstream reports still read (data reconciliation cannot see it)</div></td>
+      <td><code>sql/contracts/dwh.json</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/contracts/dwh.json</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/privacy/email_in_free_text.sql</b><div class="muted">A reporter&#39;s e-mail address was typed into the event description and copied into the warehouse</div></td>
+      <td><code>sql/checks/rules/privacy/personal_data_values.sql on dwh</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/recon/facts/fact_adverse_event_vs_source</code></div><div><code>sql/checks/recon/views/v_adverse_event_detail_vs_source</code></div><div><code>sql/checks/rules/privacy/personal_data_values.sql on dwh</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/latest/dedup_skipped.sql</b><div class="muted">The latest job appended a redelivered event instead of collapsing it</div></td>
+      <td><code>sql/checks/rules/keys/unique.sql on latest.adverse_event (ae_id)</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/recon/history/hist_current_vs_latest for adverse_event</code></div><div><code>sql/checks/recon/latest/latest_vs_source for adverse_event</code></div><div><code>sql/checks/rules/keys/unique.sql on latest.adverse_event (ae_id)</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/partitions/out_of_range_date.sql</b><div class="muted">A date parsed with day and month swapped landed outside the partition plan</div></td>
+      <td><code>sql/checks/rules/partitions/default_partition_empty.sql on dwh.fact_adverse_event</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/recon/aggregates/safety_totals_by_study</code></div><div><code>sql/checks/recon/facts/fact_adverse_event_vs_source</code></div><div><code>sql/checks/recon/views/v_safety_by_study_month_vs_source</code></div><div><code>sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.onset_date_key</code></div><div><code>sql/checks/rules/partitions/default_partition_empty.sql on dwh.fact_adverse_event</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/latest/delete_not_applied.sql</b><div class="muted">A delete event was ignored, so a record entered in error is still reported</div></td>
+      <td><code>sql/checks/rules/history/deletes_applied.sql on latest.adverse_event</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/recon/history/hist_current_vs_latest for adverse_event</code></div><div><code>sql/checks/recon/latest/latest_vs_source for adverse_event</code></div><div><code>sql/checks/rules/history/deletes_applied.sql on latest.adverse_event</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/privacy/birth_date_exposed.sql</b><div class="muted">A developer added the subject&#39;s birth year to the analyst-facing subject dimension</div></td>
+      <td><code>sql/checks/rules/privacy/personal_data_columns.sql on dwh</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/rules/privacy/personal_data_columns.sql on dwh</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/dimensions/duplicate_subject.sql</b><div class="muted">A dimension reload inserted a subject twice with a new surrogate key</div></td>
+      <td><code>sql/checks/rules/keys/unique.sql on dwh.dim_subject (subject_id)</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/recon/dimensions/dim_subject_vs_source</code></div><div><code>sql/checks/rules/keys/unique.sql on dwh.dim_subject (subject_id)</code></div></td>
+    </tr>
+    
+    <tr>
+      <td><b>sql/defects/facts/corrupted_grade.sql</b><div class="muted">A mapping table shifted toxicity grades by one</div></td>
+      <td><code>sql/checks/recon/facts/fact_adverse_event_vs_source</code></td>
+      <td><span class="pill ok">CAUGHT</span></td>
+      <td><div><code>sql/checks/recon/aggregates/safety_totals_by_study</code></div><div><code>sql/checks/recon/facts/fact_adverse_event_vs_source</code></div><div><code>sql/checks/recon/views/v_adverse_event_detail_vs_source</code></div></td>
+    </tr>
+    
+  </table>
+  
+
+  
+  <h2>GenAI narrative evaluation</h2>
+  <div class="cards">
+    
+    <div class="card"><div class="muted">subject match</div>
+      <div class="big">24 / 24</div>
+      <div class="bar"><span style="width: 100.0%"></span></div></div>
+    
+    <div class="card"><div class="muted">count accuracy</div>
+      <div class="big">24 / 24</div>
+      <div class="bar"><span style="width: 100.0%"></span></div></div>
+    
+    <div class="card"><div class="muted">max grade accuracy</div>
+      <div class="big">24 / 24</div>
+      <div class="bar"><span style="width: 100.0%"></span></div></div>
+    
+    <div class="card"><div class="muted">term grounding</div>
+      <div class="big">24 / 24</div>
+      <div class="bar"><span style="width: 100.0%"></span></div></div>
+    
+    <div class="card"><div class="muted">term coverage</div>
+      <div class="big">24 / 24</div>
+      <div class="bar"><span style="width: 100.0%"></span></div></div>
+    
+    <div class="card"><div class="muted">numeric grounding</div>
+      <div class="big">24 / 24</div>
+      <div class="bar"><span style="width: 100.0%"></span></div></div>
+    
+    <div class="card"><div class="muted">serious disclosed</div>
+      <div class="big">24 / 24</div>
+      <div class="bar"><span style="width: 100.0%"></span></div></div>
+    
+    <div class="card"><div class="muted">length limit</div>
+      <div class="big">24 / 24</div>
+      <div class="bar"><span style="width: 100.0%"></span></div></div>
+    
+  </div>
+  <h2></h2>
+  <table>
+    <tr><th>Case</th><th>Summariser</th><th>Result</th><th>Failed metrics</th></tr>
+    
+    <tr>
+      <td>SUBJ-0101</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0103</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0103</td><td>fallback after: None</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0103</td><td>fallback after: None</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0103</td><td>fallback after: None</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0103</td><td>fallback after: None</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0103</td><td>fallback after: None</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0103</td><td>fallback after: None</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0105</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0107</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0104</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0106</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0102</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>warehouse SUBJ-0038</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>warehouse SUBJ-0027</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>warehouse SUBJ-0034</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>warehouse SUBJ-0110</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>warehouse SUBJ-0014</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>warehouse SUBJ-0088</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>warehouse SUBJ-0090</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>warehouse SUBJ-0011</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>warehouse SUBJ-0106</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>warehouse SUBJ-0035</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0103 (model that invents events)</td><td>invents-events double</td>
+      <td><span class="pill ok">FLAGGED (expected)</span>
+          </td>
+      <td><div><b>count_accuracy</b>: expected total=2 serious=1, got total=3 serious=2</div><div><b>max_grade_accuracy</b>: expected 4, got 5</div><div><b>term_grounding</b>: terms not in the records: [&#39;Myocardial infarction&#39;]</div><div><b>numeric_grounding</b>: numbers not supported by the data: [&#39;12&#39;]</div></td>
+    </tr>
+    
+    <tr>
+      <td>SUBJ-0102</td><td>template</td>
+      <td><span class="pill ok">PASS</span></td>
+      <td><span class="muted">none</span></td>
+    </tr>
+    
+  </table>
+  
+</main>
+</body>
+</html>

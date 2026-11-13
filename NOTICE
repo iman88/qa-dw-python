@@ -1,0 +1,15 @@
+qa-dw-python
+Copyright 2026 Ionut Man
+
+Created by Ionut Man (https://github.com/iman88) to show his work in data warehouse and
+GenAI test automation.
+
+This product is licensed under the Apache License, Version 2.0 (see LICENSE). You may use,
+modify and redistribute it, including commercially. If you redistribute it or a work based on it,
+this NOTICE must go with it (Apache License 2.0, section 4(d)), and a credit such as:
+
+  Based on qa-dw-python by Ionut Man (https://github.com/iman88)
+
+is appreciated wherever you describe the work.
+
+All data in this repository is synthetic. It contains no patient, client or employer data.

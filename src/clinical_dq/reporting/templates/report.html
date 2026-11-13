@@ -1,0 +1,163 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Data Quality Report</title>
+<style>
+  :root {
+    --bg: #f6f7f9; --card: #ffffff; --ink: #1d2433; --muted: #5d6779; --line: #e3e7ee;
+    --ok: #1f8a5b; --ok-bg: #e6f5ee; --bad: #c2352d; --bad-bg: #fdecea; --accent: #2f5bd3;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #11151c; --card: #1a202a; --ink: #e6e9ef; --muted: #9aa4b5; --line: #2a3240;
+            --ok: #4cc38a; --ok-bg: #12271d; --bad: #f2766d; --bad-bg: #2d1715; --accent: #7c9cff; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; background: var(--bg); color: var(--ink); }
+  header { padding: 28px 32px 8px; }
+  h1 { margin: 0 0 4px; font-size: 22px; }
+  h2 { font-size: 16px; margin: 28px 0 10px; }
+  .muted { color: var(--muted); }
+  main { padding: 0 32px 40px; max-width: 1280px; }
+  .cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-top: 16px; }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .card .big { font-size: 26px; font-weight: 650; }
+  .bar { height: 6px; background: var(--bad-bg); border-radius: 3px; overflow: hidden; margin-top: 8px; }
+  .bar > span { display: block; height: 100%; background: var(--ok); }
+  table { width: 100%; border-collapse: collapse; background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  th, td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+  th { font-size: 12px; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); font-weight: 600; }
+  tr:last-child td { border-bottom: 0; }
+  .pill { display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+  .ok { color: var(--ok); background: var(--ok-bg); }
+  .bad { color: var(--bad); background: var(--bad-bg); }
+  code, pre { font: 12px/1.45 ui-monospace, "Cascadia Code", Consolas, monospace; }
+  pre { white-space: pre-wrap; margin: 6px 0 0; background: var(--bg); padding: 8px; border-radius: 6px; }
+  details summary { cursor: pointer; color: var(--accent); }
+  .layer { font-size: 11px; color: var(--muted); text-transform: uppercase; }
+  .stats { display: flex; flex-wrap: wrap; gap: 8px 18px; }
+  .stats div { white-space: nowrap; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Data Quality Report</h1>
+  <div class="muted">Clinical safety warehouse · generated {{ generated_at }}</div>
+</header>
+<main>
+  <section class="cards">
+    {% for label, key in [("Requirements verified", "requirements"), ("Reconciliations", "reconciliation"),
+                          ("Data quality rules", "data_quality"), ("Defects caught", "mutations"),
+                          ("GenAI cases", "genai_cases")] %}
+    {% set s = summary[key] %}
+    <div class="card">
+      <div class="muted">{{ label }}</div>
+      <div class="big">{{ s.passed }} / {{ s.total }}</div>
+      <div class="bar"><span style="width: {{ (100 * s.passed / s.total) if s.total else 0 }}%"></span></div>
+    </div>
+    {% endfor %}
+  </section>
+
+  {% if build %}
+  <h2>Pipeline build</h2>
+  <div class="card stats">
+    {% for k, v in build.get("stats", {}).items() %}<div><span class="muted">{{ k.replace("_", " ") }}:</span> <b>{{ v }}</b></div>{% endfor %}
+    {% for k, v in build.get("timings_ms", {}).items() %}<div><span class="muted">{{ k }}:</span> {{ v }} ms</div>{% endfor %}
+  </div>
+  {% endif %}
+
+  {% if requirements %}
+  <h2>Requirements traceability</h2>
+  <table>
+    <tr><th>Requirement</th><th>Statement</th><th>Status</th><th>Scenarios</th></tr>
+    {% for r in requirements %}
+    <tr>
+      <td><b>{{ r.id }}</b><div class="muted">{{ r.title }}</div></td>
+      <td>{{ r.text }}</td>
+      <td><span class="pill {{ 'ok' if r.status == 'PASSED' else 'bad' }}">{{ r.status }}</span></td>
+      <td>{{ r.passed }} / {{ r.total }} passed<div class="layer">{{ r.features | join(", ") }}</div></td>
+    </tr>
+    {% endfor %}
+  </table>
+  <div class="muted">Auditor copy: traceability-matrix.csv, one row per requirement and scenario.</div>
+  {% endif %}
+
+  {% if reconciliation %}
+  <h2>Reconciliation</h2>
+  <table>
+    <tr><th>Check</th><th>Result</th><th>Source</th><th>Target</th><th>Differences</th></tr>
+    {% for r in reconciliation %}
+    <tr>
+      <td><b>{{ r.name }}</b><div class="muted">{{ r.description }}</div><div class="layer">key: {{ r.key | join(", ") }}</div></td>
+      <td><span class="pill {{ 'ok' if r.passed else 'bad' }}">{{ "PASS" if r.passed else "FAIL" }}</span></td>
+      <td>{{ r.source_count }}</td><td>{{ r.target_count }}</td>
+      <td>
+        {% if r.passed %}<span class="muted">none · {{ r.compared_columns | length }} columns compared</span>{% else %}
+        {% for k, n in r.counts.items() if n %}<div>{{ k.replace("_", " ") }}: <b>{{ n }}</b></div>{% endfor %}
+        <details><summary>sample</summary><pre>{{ {"missing_in_target": r.missing_in_target, "extra_in_target": r.extra_in_target, "duplicate_in_target": r.duplicate_in_target, "mismatches": r.mismatches} | tojson(indent=2) }}</pre></details>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  {% if data_quality %}
+  <h2>Data quality rules</h2>
+  <table>
+    <tr><th>Rule</th><th>Layer</th><th>Result</th><th>Offending rows</th></tr>
+    {% for r in data_quality %}
+    <tr>
+      <td><b>{{ r.name }}</b><div class="muted">{{ r.description }}</div></td>
+      <td class="layer">{{ r.layer }}</td>
+      <td><span class="pill {{ 'ok' if r.passed else 'bad' }}">{{ "PASS" if r.passed else "FAIL" }}</span></td>
+      <td>{{ r.failing_rows }}
+        <details><summary>SQL{% if not r.passed %} and sample{% endif %}</summary><pre>{{ r.sql }}</pre>
+        {% if r.sample %}<pre>{{ r.sample | tojson(indent=2) }}</pre>{% endif %}</details>
+      </td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  {% if mutations %}
+  <h2>Defect injection (do the checks catch real bugs?)</h2>
+  <table>
+    <tr><th>Injected defect</th><th>Expected to be caught by</th><th>Result</th><th>Everything that fired</th></tr>
+    {% for m in mutations %}
+    <tr>
+      <td><b>{{ m.defect }}</b><div class="muted">{{ m.story }}</div></td>
+      <td><code>{{ m.expected_check }}</code></td>
+      <td><span class="pill {{ 'ok' if m.caught else 'bad' }}">{{ "CAUGHT" if m.caught else "MISSED" }}</span></td>
+      <td>{% for c in m.caught_by %}<div><code>{{ c }}</code></div>{% endfor %}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+  {% if genai %}
+  <h2>GenAI narrative evaluation</h2>
+  <div class="cards">
+    {% for name, m in genai_metrics.items() %}
+    <div class="card"><div class="muted">{{ name.replace("_", " ") }}</div>
+      <div class="big">{{ m.passed }} / {{ m.total }}</div>
+      <div class="bar"><span style="width: {{ 100 * m.passed / m.total }}%"></span></div></div>
+    {% endfor %}
+  </div>
+  <h2></h2>
+  <table>
+    <tr><th>Case</th><th>Summariser</th><th>Result</th><th>Failed metrics</th></tr>
+    {% for c in genai %}
+    <tr>
+      <td>{{ c.case_id }}</td><td>{{ c.summariser }}</td>
+      <td>{% if c.expected_failure %}<span class="pill {{ 'ok' if c.score_ok else 'bad' }}">{{ "FLAGGED (expected)" if c.score_ok else "MISSED" }}</span>
+          {% else %}<span class="pill {{ 'ok' if c.passed else 'bad' }}">{{ "PASS" if c.passed else "FAIL" }}</span>{% endif %}</td>
+      <td>{% for k, v in c.reasons.items() %}<div><b>{{ k }}</b>: {{ v }}</div>{% else %}<span class="muted">none</span>{% endfor %}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+</main>
+</body>
+</html>

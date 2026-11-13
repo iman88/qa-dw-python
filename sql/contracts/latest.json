@@ -1,0 +1,255 @@
+{
+  "layer": "latest",
+  "version": "1.0.0",
+  "owner": "data engineering",
+  "consumers": [
+    "dwh build (sql/build/dimensions, sql/build/facts)"
+  ],
+  "objects": {
+    "adverse_event": {
+      "type": "table",
+      "columns": [
+        [
+          "ae_id",
+          "text",
+          false
+        ],
+        [
+          "subject_id",
+          "text",
+          false
+        ],
+        [
+          "meddra_pt",
+          "text",
+          false
+        ],
+        [
+          "soc",
+          "text",
+          false
+        ],
+        [
+          "grade",
+          "smallint",
+          false
+        ],
+        [
+          "serious",
+          "boolean",
+          false
+        ],
+        [
+          "related",
+          "boolean",
+          false
+        ],
+        [
+          "onset_date",
+          "date",
+          false
+        ],
+        [
+          "resolved_date",
+          "date",
+          false
+        ],
+        [
+          "outcome",
+          "text",
+          false
+        ],
+        [
+          "last_change_seq",
+          "bigint",
+          false
+        ],
+        [
+          "last_changed_at",
+          "timestamp with time zone",
+          false
+        ]
+      ]
+    },
+    "site": {
+      "type": "table",
+      "columns": [
+        [
+          "site_id",
+          "text",
+          false
+        ],
+        [
+          "study_id",
+          "text",
+          false
+        ],
+        [
+          "country_code",
+          "character(2)",
+          false
+        ],
+        [
+          "investigator",
+          "text",
+          false
+        ],
+        [
+          "status",
+          "text",
+          false
+        ],
+        [
+          "last_change_seq",
+          "bigint",
+          false
+        ],
+        [
+          "last_changed_at",
+          "timestamp with time zone",
+          false
+        ]
+      ]
+    },
+    "study": {
+      "type": "table",
+      "columns": [
+        [
+          "study_id",
+          "text",
+          false
+        ],
+        [
+          "study_code",
+          "text",
+          false
+        ],
+        [
+          "title",
+          "text",
+          false
+        ],
+        [
+          "phase",
+          "text",
+          false
+        ],
+        [
+          "therapeutic_area",
+          "text",
+          false
+        ],
+        [
+          "start_date",
+          "date",
+          false
+        ],
+        [
+          "last_change_seq",
+          "bigint",
+          false
+        ],
+        [
+          "last_changed_at",
+          "timestamp with time zone",
+          false
+        ]
+      ]
+    },
+    "subject": {
+      "type": "table",
+      "columns": [
+        [
+          "subject_id",
+          "text",
+          false
+        ],
+        [
+          "site_id",
+          "text",
+          false
+        ],
+        [
+          "study_id",
+          "text",
+          false
+        ],
+        [
+          "arm",
+          "text",
+          false
+        ],
+        [
+          "sex",
+          "character(1)",
+          false
+        ],
+        [
+          "birth_year",
+          "integer",
+          false
+        ],
+        [
+          "enrolled_on",
+          "date",
+          false
+        ],
+        [
+          "withdrawn_on",
+          "date",
+          false
+        ],
+        [
+          "last_change_seq",
+          "bigint",
+          false
+        ],
+        [
+          "last_changed_at",
+          "timestamp with time zone",
+          false
+        ]
+      ]
+    },
+    "visit": {
+      "type": "table",
+      "columns": [
+        [
+          "visit_id",
+          "text",
+          false
+        ],
+        [
+          "subject_id",
+          "text",
+          false
+        ],
+        [
+          "visit_type",
+          "text",
+          false
+        ],
+        [
+          "visit_date",
+          "date",
+          false
+        ],
+        [
+          "status",
+          "text",
+          false
+        ],
+        [
+          "last_change_seq",
+          "bigint",
+          false
+        ],
+        [
+          "last_changed_at",
+          "timestamp with time zone",
+          false
+        ]
+      ]
+    }
+  }
+}

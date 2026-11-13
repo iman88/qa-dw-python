@@ -1,0 +1,15 @@
+.venv/
+__pycache__/
+*.pyc
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.env
+.idea/
+.vscode/
+
+# Knowledge graph (rebuilt locally with `graphify update .`)
+graphify-out/
+.claude/settings.local.json
+.hypothesis/
+.mypy_cache/

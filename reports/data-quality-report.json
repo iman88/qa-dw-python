@@ -1,0 +1,2875 @@
+{
+  "generated_at": "2026-11-13T09:21:50+00:00",
+  "build": {
+    "stats": {
+      "change_events": 1935,
+      "delivered_events": 2050,
+      "duplicate_deliveries": 115,
+      "late_arrivals": 84,
+      "deletes": 7,
+      "source_study_rows": 3,
+      "source_site_rows": 12,
+      "source_subject_rows": 120,
+      "source_visit_rows": 701,
+      "source_adverse_event_rows": 205
+    },
+    "timings_ms": {
+      "generate": 203.6,
+      "landing": 3300.1,
+      "history": 224.5,
+      "latest": 165.8,
+      "dimensions": 406.5,
+      "facts": 457.3,
+      "views": 37.2,
+      "security": 9.6
+    }
+  },
+  "summary": {
+    "reconciliation": {
+      "total": 37,
+      "passed": 37
+    },
+    "data_quality": {
+      "total": 66,
+      "passed": 66
+    },
+    "mutations": {
+      "total": 18,
+      "passed": 18
+    },
+    "genai_cases": {
+      "total": 25,
+      "passed": 25
+    },
+    "requirements": {
+      "total": 13,
+      "passed": 12
+    }
+  },
+  "requirements": [
+    {
+      "id": "REQ_01",
+      "title": "Completeness and accuracy",
+      "text": "Every current source record reaches each layer and the warehouse complete and unchanged, row by row and in aggregate.",
+      "status": "PASSED",
+      "passed": 37,
+      "total": 37,
+      "features": [
+        "pushdown",
+        "recon",
+        "warehouse"
+      ]
+    },
+    {
+      "id": "REQ_02",
+      "title": "Deduplication and deletes",
+      "text": "Redelivered change events are kept once, the latest change per key wins, and records deleted in the source are removed from current state.",
+      "status": "PASSED",
+      "passed": 26,
+      "total": 26,
+      "features": [
+        "edge",
+        "history"
+      ]
+    },
+    {
+      "id": "REQ_03",
+      "title": "Full history",
+      "text": "Every change is kept exactly once with a clean validity timeline per key, including deletes as tombstones.",
+      "status": "PASSED",
+      "passed": 26,
+      "total": 26,
+      "features": [
+        "edge",
+        "history"
+      ]
+    },
+    {
+      "id": "REQ_04",
+      "title": "Dimensional model integrity",
+      "text": "Keys are unique, every fact finds its dimension rows, and type 2 dimensions are joined at the point in time of the event.",
+      "status": "PASSED",
+      "passed": 18,
+      "total": 18,
+      "features": [
+        "star"
+      ]
+    },
+    {
+      "id": "REQ_05",
+      "title": "Partitioning",
+      "text": "Facts and raw events sit in complete monthly partitions, nothing falls outside the plan, and date filters read only the partitions they need.",
+      "status": "PASSED",
+      "passed": 18,
+      "total": 18,
+      "features": [
+        "partition"
+      ]
+    },
+    {
+      "id": "REQ_06",
+      "title": "Controlled schema changes",
+      "text": "Every layer matches a versioned, reviewed contract; breaking changes fail, compatible changes are reported.",
+      "status": "PASSED",
+      "passed": 8,
+      "total": 8,
+      "features": [
+        "schema"
+      ]
+    },
+    {
+      "id": "REQ_07",
+      "title": "Incremental loads",
+      "text": "Loading data incrementally gives the same result as a full rebuild, whatever the arrival order, and re-running a load changes nothing.",
+      "status": "PASSED",
+      "passed": 26,
+      "total": 26,
+      "features": [
+        "edge",
+        "incremental"
+      ]
+    },
+    {
+      "id": "REQ_08",
+      "title": "Proven detection",
+      "text": "Every check is shown to detect the defect it is designed for.",
+      "status": "PASSED",
+      "passed": 24,
+      "total": 24,
+      "features": [
+        "mutation",
+        "pushdown"
+      ]
+    },
+    {
+      "id": "REQ_09",
+      "title": "Production monitoring",
+      "text": "The live warehouse is checked on a schedule for quality, freshness, volume and drift; results are stored and failures alerted.",
+      "status": "PASSED",
+      "passed": 4,
+      "total": 4,
+      "features": [
+        "monitoring"
+      ]
+    },
+    {
+      "id": "REQ_10",
+      "title": "Personal data protection",
+      "text": "No unapproved personal data is stored, and approved personal data is visible only to authorised roles.",
+      "status": "PASSED",
+      "passed": 24,
+      "total": 24,
+      "features": [
+        "compliance",
+        "mutation"
+      ]
+    },
+    {
+      "id": "REQ_11",
+      "title": "Grounded GenAI output",
+      "text": "Generated safety narratives count exactly, invent nothing, disclose serious events, and the service keeps working when the model does not.",
+      "status": "PARTLY RUN",
+      "passed": 27,
+      "total": 28,
+      "features": [
+        "genai",
+        "genai_scale"
+      ]
+    },
+    {
+      "id": "REQ_12",
+      "title": "Reproducible test data",
+      "text": "Test data is synthetic, seeded and documented with exact figures.",
+      "status": "PASSED",
+      "passed": 3,
+      "total": 3,
+      "features": [
+        "data"
+      ]
+    },
+    {
+      "id": "REQ_13",
+      "title": "Traceable, retained evidence",
+      "text": "Every requirement is traced to the tests that verify it, and each run's evidence is retained with tamper-evident hashes.",
+      "status": "PASSED",
+      "passed": 5,
+      "total": 5,
+      "features": [
+        "compliance"
+      ]
+    }
+  ],
+  "reconciliation": [
+    {
+      "name": "full vs incremental: sql/checks/build_compare/adverse_event_facts.sql on dwh",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 410
+      },
+      "passed": true,
+      "key": [
+        "ae_id"
+      ],
+      "compared_columns": [
+        "study_id",
+        "subject_id",
+        "site_id",
+        "investigator_at_onset",
+        "onset_date",
+        "meddra_pt",
+        "grade",
+        "is_serious",
+        "is_related",
+        "outcome",
+        "days_to_resolution"
+      ],
+      "source_count": 205,
+      "target_count": 205,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "full vs incremental: sql/checks/build_compare/dim_site_versions.sql on dwh",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 66
+      },
+      "passed": true,
+      "key": [
+        "site_id",
+        "valid_from"
+      ],
+      "compared_columns": [
+        "valid_to",
+        "is_current",
+        "study_id",
+        "country_code",
+        "investigator",
+        "status"
+      ],
+      "source_count": 33,
+      "target_count": 33,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "full vs incremental: sql/checks/build_compare/dim_subject_rows.sql on dwh",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 240
+      },
+      "passed": true,
+      "key": [
+        "subject_id"
+      ],
+      "compared_columns": [
+        "study_id",
+        "site_id",
+        "arm",
+        "sex",
+        "age_at_enrolment",
+        "enrolled_date_key",
+        "is_withdrawn"
+      ],
+      "source_count": 120,
+      "target_count": 120,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "full vs incremental: sql/checks/build_compare/history_table.sql on hist for adverse_event",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 762
+      },
+      "passed": true,
+      "key": [
+        "change_seq"
+      ],
+      "compared_columns": [
+        "ae_id",
+        "subject_id",
+        "meddra_pt",
+        "soc",
+        "grade",
+        "serious",
+        "related",
+        "onset_date",
+        "resolved_date",
+        "outcome",
+        "op",
+        "valid_from",
+        "valid_to",
+        "is_current",
+        "is_deleted",
+        "first_ingested_at"
+      ],
+      "source_count": 381,
+      "target_count": 381,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "full vs incremental: sql/checks/build_compare/history_table.sql on hist for site",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 66
+      },
+      "passed": true,
+      "key": [
+        "change_seq"
+      ],
+      "compared_columns": [
+        "site_id",
+        "study_id",
+        "country_code",
+        "investigator",
+        "status",
+        "op",
+        "valid_from",
+        "valid_to",
+        "is_current",
+        "is_deleted",
+        "first_ingested_at"
+      ],
+      "source_count": 33,
+      "target_count": 33,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "full vs incremental: sql/checks/build_compare/history_table.sql on hist for study",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 6
+      },
+      "passed": true,
+      "key": [
+        "change_seq"
+      ],
+      "compared_columns": [
+        "study_id",
+        "study_code",
+        "title",
+        "phase",
+        "therapeutic_area",
+        "start_date",
+        "op",
+        "valid_from",
+        "valid_to",
+        "is_current",
+        "is_deleted",
+        "first_ingested_at"
+      ],
+      "source_count": 3,
+      "target_count": 3,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "full vs incremental: sql/checks/build_compare/history_table.sql on hist for subject",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 254
+      },
+      "passed": true,
+      "key": [
+        "change_seq"
+      ],
+      "compared_columns": [
+        "subject_id",
+        "site_id",
+        "study_id",
+        "arm",
+        "sex",
+        "birth_year",
+        "enrolled_on",
+        "withdrawn_on",
+        "op",
+        "valid_from",
+        "valid_to",
+        "is_current",
+        "is_deleted",
+        "first_ingested_at"
+      ],
+      "source_count": 127,
+      "target_count": 127,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "full vs incremental: sql/checks/build_compare/history_table.sql on hist for visit",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 2782
+      },
+      "passed": true,
+      "key": [
+        "change_seq"
+      ],
+      "compared_columns": [
+        "visit_id",
+        "subject_id",
+        "visit_type",
+        "visit_date",
+        "status",
+        "op",
+        "valid_from",
+        "valid_to",
+        "is_current",
+        "is_deleted",
+        "first_ingested_at"
+      ],
+      "source_count": 1391,
+      "target_count": 1391,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "full vs incremental: sql/checks/build_compare/latest_table.sql on latest for adverse_event",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 410
+      },
+      "passed": true,
+      "key": [
+        "ae_id"
+      ],
+      "compared_columns": [
+        "subject_id",
+        "meddra_pt",
+        "soc",
+        "grade",
+        "serious",
+        "related",
+        "onset_date",
+        "resolved_date",
+        "outcome",
+        "last_change_seq",
+        "last_changed_at"
+      ],
+      "source_count": 205,
+      "target_count": 205,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "full vs incremental: sql/checks/build_compare/latest_table.sql on latest for site",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 24
+      },
+      "passed": true,
+      "key": [
+        "site_id"
+      ],
+      "compared_columns": [
+        "study_id",
+        "country_code",
+        "investigator",
+        "status",
+        "last_change_seq",
+        "last_changed_at"
+      ],
+      "source_count": 12,
+      "target_count": 12,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "full vs incremental: sql/checks/build_compare/latest_table.sql on latest for study",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 6
+      },
+      "passed": true,
+      "key": [
+        "study_id"
+      ],
+      "compared_columns": [
+        "study_code",
+        "title",
+        "phase",
+        "therapeutic_area",
+        "start_date",
+        "last_change_seq",
+        "last_changed_at"
+      ],
+      "source_count": 3,
+      "target_count": 3,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "full vs incremental: sql/checks/build_compare/latest_table.sql on latest for subject",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 240
+      },
+      "passed": true,
+      "key": [
+        "subject_id"
+      ],
+      "compared_columns": [
+        "site_id",
+        "study_id",
+        "arm",
+        "sex",
+        "birth_year",
+        "enrolled_on",
+        "withdrawn_on",
+        "last_change_seq",
+        "last_changed_at"
+      ],
+      "source_count": 120,
+      "target_count": 120,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "full vs incremental: sql/checks/build_compare/latest_table.sql on latest for visit",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 1402
+      },
+      "passed": true,
+      "key": [
+        "visit_id"
+      ],
+      "compared_columns": [
+        "subject_id",
+        "visit_type",
+        "visit_date",
+        "status",
+        "last_change_seq",
+        "last_changed_at"
+      ],
+      "source_count": 701,
+      "target_count": 701,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "full vs incremental: sql/checks/build_compare/visit_facts.sql on dwh",
+      "description": "",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 1402
+      },
+      "passed": true,
+      "key": [
+        "visit_id"
+      ],
+      "compared_columns": [
+        "subject_id",
+        "visit_date",
+        "visit_type",
+        "status",
+        "is_completed"
+      ],
+      "source_count": 701,
+      "target_count": 701,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/aggregates/safety_totals_by_study",
+      "description": "Aggregate: adverse events, serious adverse events and grade sum per study",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 6
+      },
+      "passed": true,
+      "key": [
+        "study_id"
+      ],
+      "compared_columns": [
+        "adverse_events",
+        "serious_adverse_events",
+        "grade_sum"
+      ],
+      "source_count": 3,
+      "target_count": 3,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/aggregates/visits_by_study_month",
+      "description": "Aggregate: completed visits per study and month",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 96
+      },
+      "passed": true,
+      "key": [
+        "study_id",
+        "year_month"
+      ],
+      "compared_columns": [
+        "completed_visits"
+      ],
+      "source_count": 48,
+      "target_count": 48,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/dimensions/dim_subject_vs_source",
+      "description": "Dim_subject holds one row per source subject, with derived age at enrolment and withdrawal flag",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 240
+      },
+      "passed": true,
+      "key": [
+        "subject_id"
+      ],
+      "compared_columns": [
+        "study_id",
+        "site_id",
+        "arm",
+        "sex",
+        "age_at_enrolment",
+        "is_withdrawn"
+      ],
+      "source_count": 120,
+      "target_count": 120,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/facts/fact_adverse_event_vs_source",
+      "description": "Every current adverse event reaches fact_adverse_event with the right subject, study, term, grade, seriousness, onset date and duration",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 410
+      },
+      "passed": true,
+      "key": [
+        "ae_id"
+      ],
+      "compared_columns": [
+        "subject_id",
+        "study_id",
+        "meddra_pt",
+        "grade",
+        "is_serious",
+        "onset_date",
+        "days_to_resolution"
+      ],
+      "source_count": 205,
+      "target_count": 205,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/facts/fact_visit_vs_source",
+      "description": "Every visit reaches fact_visit with the right subject, date and completion flag",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 1402
+      },
+      "passed": true,
+      "key": [
+        "visit_id"
+      ],
+      "compared_columns": [
+        "subject_id",
+        "visit_type",
+        "visit_date",
+        "is_completed"
+      ],
+      "source_count": 701,
+      "target_count": 701,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/history/hist_current_vs_latest for adverse_event",
+      "description": "The current-state view hist.v_adverse_event_current equals latest.adverse_event",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 410
+      },
+      "passed": true,
+      "key": [
+        "ae_id"
+      ],
+      "compared_columns": [
+        "subject_id",
+        "meddra_pt",
+        "soc",
+        "grade",
+        "serious",
+        "related",
+        "onset_date",
+        "resolved_date",
+        "outcome"
+      ],
+      "source_count": 205,
+      "target_count": 205,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/history/hist_current_vs_latest for site",
+      "description": "The current-state view hist.v_site_current equals latest.site",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 24
+      },
+      "passed": true,
+      "key": [
+        "site_id"
+      ],
+      "compared_columns": [
+        "study_id",
+        "country_code",
+        "investigator",
+        "status"
+      ],
+      "source_count": 12,
+      "target_count": 12,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/history/hist_current_vs_latest for study",
+      "description": "The current-state view hist.v_study_current equals latest.study",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 6
+      },
+      "passed": true,
+      "key": [
+        "study_id"
+      ],
+      "compared_columns": [
+        "study_code",
+        "title",
+        "phase",
+        "therapeutic_area",
+        "start_date"
+      ],
+      "source_count": 3,
+      "target_count": 3,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/history/hist_current_vs_latest for subject",
+      "description": "The current-state view hist.v_subject_current equals latest.subject",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 240
+      },
+      "passed": true,
+      "key": [
+        "subject_id"
+      ],
+      "compared_columns": [
+        "site_id",
+        "study_id",
+        "arm",
+        "sex",
+        "birth_year",
+        "enrolled_on",
+        "withdrawn_on"
+      ],
+      "source_count": 120,
+      "target_count": 120,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/history/hist_current_vs_latest for visit",
+      "description": "The current-state view hist.v_visit_current equals latest.visit",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 1402
+      },
+      "passed": true,
+      "key": [
+        "visit_id"
+      ],
+      "compared_columns": [
+        "subject_id",
+        "visit_type",
+        "visit_date",
+        "status"
+      ],
+      "source_count": 701,
+      "target_count": 701,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/history/hist_vs_raw_changes for adverse_event",
+      "description": "Every distinct change of adverse_event delivered to raw is kept exactly once in hist.adverse_event_history",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 762
+      },
+      "passed": true,
+      "key": [
+        "change_seq"
+      ],
+      "compared_columns": [
+        "op",
+        "changed_at"
+      ],
+      "source_count": 381,
+      "target_count": 381,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/history/hist_vs_raw_changes for site",
+      "description": "Every distinct change of site delivered to raw is kept exactly once in hist.site_history",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 66
+      },
+      "passed": true,
+      "key": [
+        "change_seq"
+      ],
+      "compared_columns": [
+        "op",
+        "changed_at"
+      ],
+      "source_count": 33,
+      "target_count": 33,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/history/hist_vs_raw_changes for study",
+      "description": "Every distinct change of study delivered to raw is kept exactly once in hist.study_history",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 6
+      },
+      "passed": true,
+      "key": [
+        "change_seq"
+      ],
+      "compared_columns": [
+        "op",
+        "changed_at"
+      ],
+      "source_count": 3,
+      "target_count": 3,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/history/hist_vs_raw_changes for subject",
+      "description": "Every distinct change of subject delivered to raw is kept exactly once in hist.subject_history",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 254
+      },
+      "passed": true,
+      "key": [
+        "change_seq"
+      ],
+      "compared_columns": [
+        "op",
+        "changed_at"
+      ],
+      "source_count": 127,
+      "target_count": 127,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/history/hist_vs_raw_changes for visit",
+      "description": "Every distinct change of visit delivered to raw is kept exactly once in hist.visit_history",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 2782
+      },
+      "passed": true,
+      "key": [
+        "change_seq"
+      ],
+      "compared_columns": [
+        "op",
+        "changed_at"
+      ],
+      "source_count": 1391,
+      "target_count": 1391,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/latest/latest_vs_source for adverse_event",
+      "description": "Deduplicated latest.adverse_event equals the current state of adverse_event in the source system",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 410
+      },
+      "passed": true,
+      "key": [
+        "ae_id"
+      ],
+      "compared_columns": [
+        "subject_id",
+        "meddra_pt",
+        "soc",
+        "grade",
+        "serious",
+        "related",
+        "onset_date",
+        "resolved_date",
+        "outcome"
+      ],
+      "source_count": 205,
+      "target_count": 205,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/latest/latest_vs_source for site",
+      "description": "Deduplicated latest.site equals the current state of site in the source system",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 24
+      },
+      "passed": true,
+      "key": [
+        "site_id"
+      ],
+      "compared_columns": [
+        "study_id",
+        "country_code",
+        "investigator",
+        "status"
+      ],
+      "source_count": 12,
+      "target_count": 12,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/latest/latest_vs_source for study",
+      "description": "Deduplicated latest.study equals the current state of study in the source system",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 6
+      },
+      "passed": true,
+      "key": [
+        "study_id"
+      ],
+      "compared_columns": [
+        "study_code",
+        "title",
+        "phase",
+        "therapeutic_area",
+        "start_date"
+      ],
+      "source_count": 3,
+      "target_count": 3,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/latest/latest_vs_source for subject",
+      "description": "Deduplicated latest.subject equals the current state of subject in the source system",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 240
+      },
+      "passed": true,
+      "key": [
+        "subject_id"
+      ],
+      "compared_columns": [
+        "site_id",
+        "study_id",
+        "arm",
+        "sex",
+        "birth_year",
+        "enrolled_on",
+        "withdrawn_on"
+      ],
+      "source_count": 120,
+      "target_count": 120,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/latest/latest_vs_source for visit",
+      "description": "Deduplicated latest.visit equals the current state of visit in the source system",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 1402
+      },
+      "passed": true,
+      "key": [
+        "visit_id"
+      ],
+      "compared_columns": [
+        "subject_id",
+        "visit_type",
+        "visit_date",
+        "status"
+      ],
+      "source_count": 701,
+      "target_count": 701,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/views/v_adverse_event_detail_vs_source",
+      "description": "Reporting view v_adverse_event_detail shows every adverse event with the right study, subject, site and clinical attributes",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 410
+      },
+      "passed": true,
+      "key": [
+        "ae_id"
+      ],
+      "compared_columns": [
+        "study_id",
+        "study_code",
+        "subject_id",
+        "arm",
+        "site_id",
+        "onset_date",
+        "year_month",
+        "meddra_pt",
+        "soc",
+        "grade",
+        "is_serious",
+        "is_related",
+        "outcome",
+        "days_to_resolution"
+      ],
+      "source_count": 205,
+      "target_count": 205,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/views/v_safety_by_study_month_vs_source",
+      "description": "Reporting view v_safety_by_study_month equals safety totals per study and month computed from the source system",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 80
+      },
+      "passed": true,
+      "key": [
+        "study_id",
+        "year_month"
+      ],
+      "compared_columns": [
+        "adverse_events",
+        "serious_adverse_events",
+        "subjects_with_events",
+        "max_grade"
+      ],
+      "source_count": 40,
+      "target_count": 40,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    },
+    {
+      "name": "sql/checks/recon/views/v_site_current_vs_source",
+      "description": "View v_site_current equals the sites the source system holds today",
+      "stats": {
+        "engine": "pushdown",
+        "buckets": 64,
+        "buckets_differing": 0,
+        "rows_fetched": 0,
+        "rows_total": 24
+      },
+      "passed": true,
+      "key": [
+        "site_id"
+      ],
+      "compared_columns": [
+        "study_id",
+        "country_code",
+        "investigator",
+        "status"
+      ],
+      "source_count": 12,
+      "target_count": 12,
+      "missing_in_target": [],
+      "extra_in_target": [],
+      "duplicate_in_source": [],
+      "duplicate_in_target": [],
+      "mismatches": [],
+      "counts": {
+        "missing_in_target": 0,
+        "extra_in_target": 0,
+        "duplicate_in_source": 0,
+        "duplicate_in_target": 0,
+        "mismatches": 0
+      }
+    }
+  ],
+  "data_quality": [
+    {
+      "name": "sql/checks/rules/history/scd2_no_overlap.sql on dwh.dim_site",
+      "layer": "dwh",
+      "description": "The versions of one site_id in dim_site form a clean timeline.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: the versions of one site_id in dim_site form a clean timeline. -- Each version must end exactly where the next one starts: no overlap and no gap. A version may be -- empty (valid_from = valid_to) when two changes carry the same timestamp; it never ends before it -- starts. Ties are ordered by valid_to, so an empty version sorts before the one that replaced it. SELECT site_id, valid_from, valid_to, next_valid_from FROM ( SELECT site_id, valid_from, valid_to, LEAD(valid_from) OVER (PARTITION BY site_id ORDER BY valid_from, valid_to) AS next_valid_from FROM dwh.dim_site ) versions WHERE valid_from > valid_to OR (next_valid_from IS NOT NULL AND valid_to <> next_valid_from)"
+    },
+    {
+      "name": "sql/checks/rules/history/scd2_point_in_time_site.sql on dwh",
+      "layer": "dwh",
+      "description": "Each adverse event points at the site version that was valid at 00:00 UTC on its",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: each adverse event points at the site version that was valid at 00:00 UTC on its -- onset date, not simply at the current version of the site. SELECT f.ae_id, f.onset_date, f.site_sk AS loaded_site_sk, expected.site_sk AS expected_site_sk FROM dwh.fact_adverse_event f JOIN dwh.dim_subject ds ON ds.subject_sk = f.subject_sk LEFT JOIN dwh.dim_site expected ON expected.site_id = ds.site_id AND f.onset_date::timestamptz >= expected.valid_from AND f.onset_date::timestamptz < expected.valid_to WHERE expected.site_sk IS DISTINCT FROM f.site_sk"
+    },
+    {
+      "name": "sql/checks/rules/history/scd2_single_current.sql on dwh.dim_site",
+      "layer": "dwh",
+      "description": "Exactly one current version per site_id in dim_site, and it is the open-ended one.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: exactly one current version per site_id in dim_site, and it is the open-ended one. SELECT site_id, count(*) FILTER (WHERE is_current) AS current_versions, max(valid_to) AS last_valid_to FROM dwh.dim_site GROUP BY site_id HAVING count(*) FILTER (WHERE is_current) <> 1 OR bool_or(is_current AND valid_to <> timestamptz '9999-12-31 00:00:00+00')"
+    },
+    {
+      "name": "sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.onset_date_key",
+      "layer": "dwh",
+      "description": "Every fact_adverse_event.onset_date_key has a matching row in dim_date.date_key.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: every fact_adverse_event.onset_date_key has a matching row in dim_date.date_key. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.onset_date_key, count(*) AS orphan_rows FROM dwh.fact_adverse_event f LEFT JOIN dwh.dim_date d ON d.date_key = f.onset_date_key WHERE d.date_key IS NULL GROUP BY f.onset_date_key"
+    },
+    {
+      "name": "sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.site_sk",
+      "layer": "dwh",
+      "description": "Every fact_adverse_event.site_sk has a matching row in dim_site.site_sk.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: every fact_adverse_event.site_sk has a matching row in dim_site.site_sk. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.site_sk, count(*) AS orphan_rows FROM dwh.fact_adverse_event f LEFT JOIN dwh.dim_site d ON d.site_sk = f.site_sk WHERE d.site_sk IS NULL GROUP BY f.site_sk"
+    },
+    {
+      "name": "sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.study_sk",
+      "layer": "dwh",
+      "description": "Every fact_adverse_event.study_sk has a matching row in dim_study.study_sk.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: every fact_adverse_event.study_sk has a matching row in dim_study.study_sk. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.study_sk, count(*) AS orphan_rows FROM dwh.fact_adverse_event f LEFT JOIN dwh.dim_study d ON d.study_sk = f.study_sk WHERE d.study_sk IS NULL GROUP BY f.study_sk"
+    },
+    {
+      "name": "sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.subject_sk",
+      "layer": "dwh",
+      "description": "Every fact_adverse_event.subject_sk has a matching row in dim_subject.subject_sk.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: every fact_adverse_event.subject_sk has a matching row in dim_subject.subject_sk. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.subject_sk, count(*) AS orphan_rows FROM dwh.fact_adverse_event f LEFT JOIN dwh.dim_subject d ON d.subject_sk = f.subject_sk WHERE d.subject_sk IS NULL GROUP BY f.subject_sk"
+    },
+    {
+      "name": "sql/checks/rules/keys/referential_integrity.sql on dwh.fact_visit.study_sk",
+      "layer": "dwh",
+      "description": "Every fact_visit.study_sk has a matching row in dim_study.study_sk.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: every fact_visit.study_sk has a matching row in dim_study.study_sk. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.study_sk, count(*) AS orphan_rows FROM dwh.fact_visit f LEFT JOIN dwh.dim_study d ON d.study_sk = f.study_sk WHERE d.study_sk IS NULL GROUP BY f.study_sk"
+    },
+    {
+      "name": "sql/checks/rules/keys/referential_integrity.sql on dwh.fact_visit.subject_sk",
+      "layer": "dwh",
+      "description": "Every fact_visit.subject_sk has a matching row in dim_subject.subject_sk.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: every fact_visit.subject_sk has a matching row in dim_subject.subject_sk. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.subject_sk, count(*) AS orphan_rows FROM dwh.fact_visit f LEFT JOIN dwh.dim_subject d ON d.subject_sk = f.subject_sk WHERE d.subject_sk IS NULL GROUP BY f.subject_sk"
+    },
+    {
+      "name": "sql/checks/rules/keys/referential_integrity.sql on dwh.fact_visit.visit_date_key",
+      "layer": "dwh",
+      "description": "Every fact_visit.visit_date_key has a matching row in dim_date.date_key.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: every fact_visit.visit_date_key has a matching row in dim_date.date_key. -- Warehouses rarely enforce foreign keys, so orphans are found by query. SELECT f.visit_date_key, count(*) AS orphan_rows FROM dwh.fact_visit f LEFT JOIN dwh.dim_date d ON d.date_key = f.visit_date_key WHERE d.date_key IS NULL GROUP BY f.visit_date_key"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on dwh.dim_site (site_id, valid_from)",
+      "layer": "dwh",
+      "description": "(site_id, valid_from) identifies exactly one row in dim_site.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (site_id, valid_from) identifies exactly one row in dim_site. -- Returns every key that appears more than once, with the number of copies. SELECT site_id, valid_from, count(*) AS copies FROM dwh.dim_site GROUP BY site_id, valid_from HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on dwh.dim_study (study_id)",
+      "layer": "dwh",
+      "description": "(study_id) identifies exactly one row in dim_study.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (study_id) identifies exactly one row in dim_study. -- Returns every key that appears more than once, with the number of copies. SELECT study_id, count(*) AS copies FROM dwh.dim_study GROUP BY study_id HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on dwh.dim_subject (subject_id)",
+      "layer": "dwh",
+      "description": "(subject_id) identifies exactly one row in dim_subject.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (subject_id) identifies exactly one row in dim_subject. -- Returns every key that appears more than once, with the number of copies. SELECT subject_id, count(*) AS copies FROM dwh.dim_subject GROUP BY subject_id HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on dwh.fact_adverse_event (ae_id)",
+      "layer": "dwh",
+      "description": "(ae_id) identifies exactly one row in fact_adverse_event.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (ae_id) identifies exactly one row in fact_adverse_event. -- Returns every key that appears more than once, with the number of copies. SELECT ae_id, count(*) AS copies FROM dwh.fact_adverse_event GROUP BY ae_id HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on dwh.fact_visit (visit_id)",
+      "layer": "dwh",
+      "description": "(visit_id) identifies exactly one row in fact_visit.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (visit_id) identifies exactly one row in fact_visit. -- Returns every key that appears more than once, with the number of copies. SELECT visit_id, count(*) AS copies FROM dwh.fact_visit GROUP BY visit_id HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on dwh.v_adverse_event_detail (ae_id)",
+      "layer": "dwh",
+      "description": "(ae_id) identifies exactly one row in v_adverse_event_detail.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (ae_id) identifies exactly one row in v_adverse_event_detail. -- Returns every key that appears more than once, with the number of copies. SELECT ae_id, count(*) AS copies FROM dwh.v_adverse_event_detail GROUP BY ae_id HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on dwh.v_safety_by_study_month (study_id, year_month)",
+      "layer": "dwh",
+      "description": "(study_id, year_month) identifies exactly one row in v_safety_by_study_month.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (study_id, year_month) identifies exactly one row in v_safety_by_study_month. -- Returns every key that appears more than once, with the number of copies. SELECT study_id, year_month, count(*) AS copies FROM dwh.v_safety_by_study_month GROUP BY study_id, year_month HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/partitions/date_key_matches_partition_date.sql on dwh.fact_adverse_event",
+      "layer": "dwh",
+      "description": "In fact_adverse_event, the date key and the partition date describe the same day.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: in fact_adverse_event, the date key and the partition date describe the same day. SELECT onset_date, onset_date_key FROM dwh.fact_adverse_event WHERE onset_date_key <> to_char(onset_date, 'YYYYMMDD')::int"
+    },
+    {
+      "name": "sql/checks/rules/partitions/date_key_matches_partition_date.sql on dwh.fact_visit",
+      "layer": "dwh",
+      "description": "In fact_visit, the date key and the partition date describe the same day.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: in fact_visit, the date key and the partition date describe the same day. SELECT visit_date, visit_date_key FROM dwh.fact_visit WHERE visit_date_key <> to_char(visit_date, 'YYYYMMDD')::int"
+    },
+    {
+      "name": "sql/checks/rules/partitions/default_partition_empty.sql on dwh.fact_adverse_event",
+      "layer": "dwh",
+      "description": "No row of fact_adverse_event falls outside the planned monthly partitions.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: no row of fact_adverse_event falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM dwh.fact_adverse_event_default"
+    },
+    {
+      "name": "sql/checks/rules/partitions/default_partition_empty.sql on dwh.fact_visit",
+      "layer": "dwh",
+      "description": "No row of fact_visit falls outside the planned monthly partitions.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: no row of fact_visit falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM dwh.fact_visit_default"
+    },
+    {
+      "name": "sql/checks/rules/partitions/partition_plan.sql on dwh.fact_adverse_event",
+      "layer": "dwh",
+      "description": "Fact_adverse_event has one partition per month from 2025-01-01 to 2026-12-01, each exactly one",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: fact_adverse_event has one partition per month from 2025-01-01 to 2026-12-01, each exactly one -- calendar month wide, named <table>_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = 'dwh' AND p.relname = 'fact_adverse_event' ), ranges AS ( SELECT partition_name, substring(bound FROM 'FROM \\(''([^'']+)''\\)')::date AS lower_bound, substring(bound FROM 'TO \\(''([^'']+)''\\)')::date AS upper_bound FROM parts WHERE bound <> 'DEFAULT' ), expected AS ( SELECT m::date AS month FROM generate_series(date '2025-01-01', date '2026-12-01', interval '1 month') AS m ) SELECT e.month AS month, NULL::text AS partition_name, 'missing partition' AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, 'not exactly one calendar month' FROM ranges r WHERE extract(DAY FROM r.lower_bound) <> 1 OR r.upper_bound <> (r.lower_bound + interval '1 month')::date UNION ALL SELECT r.lower_bound, r.partition_name, 'name does not match its bounds' FROM ranges r WHERE r.partition_name <> 'fact_adverse_event_' || to_char(r.lower_bound, 'YYYYMM') UNION ALL SELECT NULL, NULL, 'no DEFAULT partition' WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = 'DEFAULT')"
+    },
+    {
+      "name": "sql/checks/rules/partitions/partition_plan.sql on dwh.fact_visit",
+      "layer": "dwh",
+      "description": "Fact_visit has one partition per month from 2025-01-01 to 2026-12-01, each exactly one",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: fact_visit has one partition per month from 2025-01-01 to 2026-12-01, each exactly one -- calendar month wide, named <table>_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = 'dwh' AND p.relname = 'fact_visit' ), ranges AS ( SELECT partition_name, substring(bound FROM 'FROM \\(''([^'']+)''\\)')::date AS lower_bound, substring(bound FROM 'TO \\(''([^'']+)''\\)')::date AS upper_bound FROM parts WHERE bound <> 'DEFAULT' ), expected AS ( SELECT m::date AS month FROM generate_series(date '2025-01-01', date '2026-12-01', interval '1 month') AS m ) SELECT e.month AS month, NULL::text AS partition_name, 'missing partition' AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, 'not exactly one calendar month' FROM ranges r WHERE extract(DAY FROM r.lower_bound) <> 1 OR r.upper_bound <> (r.lower_bound + interval '1 month')::date UNION ALL SELECT r.lower_bound, r.partition_name, 'name does not match its bounds' FROM ranges r WHERE r.partition_name <> 'fact_visit_' || to_char(r.lower_bound, 'YYYYMM') UNION ALL SELECT NULL, NULL, 'no DEFAULT partition' WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = 'DEFAULT')"
+    },
+    {
+      "name": "sql/checks/rules/privacy/personal_data_columns.sql on dwh",
+      "layer": "dwh",
+      "description": "No column in {schema} has a name that suggests personal data (birth, email, phone, address, national id, name...) unless it is on the approved list ('dim_site.investigator', 'v_site_current.investigator', 'v_adverse_event_detail.investigator_at_onset').",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: no column in dwh has a name that suggests personal data (birth, email, phone, address, national id, name...) unless it is on the approved list ('dim_site.investigator', 'v_site_current.investigator', 'v_adverse_event_detail.investigator_at_onset'). SELECT c.table_name, c.column_name FROM information_schema.columns c WHERE c.table_schema = 'dwh' AND c.column_name ~* '(birth|dob|e_?mail|phone|mobile|address|street|zip|postcode|national_id|cnp|ssn|passport|first_?name|last_?name|surname|initials|investigator)' AND c.table_name || '.' || c.column_name NOT IN ('dim_site.investigator', 'v_site_current.investigator', 'v_adverse_event_detail.investigator_at_onset')"
+    },
+    {
+      "name": "sql/checks/rules/privacy/personal_data_values.sql on dwh",
+      "layer": "dwh",
+      "description": "No text value anywhere in {schema} looks like an e-mail address, a phone number or a Romanian national ID (CNP). Scans every text column of every table and view.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: no text value anywhere in dwh looks like an e-mail address, a phone number or a Romanian national ID (CNP). Scans every text column of every table and view. SELECT table_name, column_name, matches FROM ( SELECT c.table_name, c.column_name, (xpath('/row/n/text()', query_to_xml(format( 'SELECT count(*) AS n FROM %I.%I WHERE %I ~ %L', c.table_schema, c.table_name, c.column_name, '([A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}|\\+?[0-9][0-9 ()-]{8,}[0-9]|\\m[1-8][0-9]{12}\\M)' ), false, true, '')))[1]::text::int AS matches FROM information_schema.columns c WHERE c.table_schema = 'dwh' AND c.data_type IN ('text', 'character varying', 'character') ) scanned WHERE matches > 0"
+    },
+    {
+      "name": "sql/checks/rules/values/accepted_values.sql on dwh.dim_subject.arm",
+      "layer": "dwh",
+      "description": "Dim_subject.arm only holds values from the agreed list.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: dim_subject.arm only holds values from the agreed list. SELECT arm, count(*) AS rows_with_value FROM dwh.dim_subject WHERE arm IS NULL OR arm NOT IN ('PLACEBO', 'DOSE_LOW', 'DOSE_HIGH') GROUP BY arm"
+    },
+    {
+      "name": "sql/checks/rules/values/accepted_values.sql on dwh.fact_adverse_event.grade",
+      "layer": "dwh",
+      "description": "Fact_adverse_event.grade only holds values from the agreed list.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: fact_adverse_event.grade only holds values from the agreed list. SELECT grade, count(*) AS rows_with_value FROM dwh.fact_adverse_event WHERE grade IS NULL OR grade NOT IN (1, 2, 3, 4, 5) GROUP BY grade"
+    },
+    {
+      "name": "sql/checks/rules/values/not_null.sql on dwh.fact_adverse_event",
+      "layer": "dwh",
+      "description": "Mandatory columns of fact_adverse_event are always filled.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: mandatory columns of fact_adverse_event are always filled. -- meddra_pt IS NULL OR soc IS NULL OR grade IS NULL OR onset_date IS NULL is \"col_a IS NULL OR col_b IS NULL ...\", built from the column list. SELECT * FROM dwh.fact_adverse_event WHERE meddra_pt IS NULL OR soc IS NULL OR grade IS NULL OR onset_date IS NULL"
+    },
+    {
+      "name": "sql/contracts/dwh.json",
+      "layer": "dwh",
+      "description": "The dwh layer has no breaking change against contract v1.0.0 (compatible changes are reported; next version would be 1.0.0)",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "sql/checks/schema/columns.sql + sql/checks/schema/partition_keys.sql"
+    },
+    {
+      "name": "sql/checks/rules/history/scd2_no_overlap.sql on hist.adverse_event_history",
+      "layer": "hist",
+      "description": "The versions of one ae_id in adverse_event_history form a clean timeline.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: the versions of one ae_id in adverse_event_history form a clean timeline. -- Each version must end exactly where the next one starts: no overlap and no gap. A version may be -- empty (valid_from = valid_to) when two changes carry the same timestamp; it never ends before it -- starts. Ties are ordered by valid_to, so an empty version sorts before the one that replaced it. SELECT ae_id, valid_from, valid_to, next_valid_from FROM ( SELECT ae_id, valid_from, valid_to, LEAD(valid_from) OVER (PARTITION BY ae_id ORDER BY valid_from, valid_to) AS next_valid_from FROM hist.adverse_event_history ) versions WHERE valid_from > valid_to OR (next_valid_from IS NOT NULL AND valid_to <> next_valid_from)"
+    },
+    {
+      "name": "sql/checks/rules/history/scd2_no_overlap.sql on hist.site_history",
+      "layer": "hist",
+      "description": "The versions of one site_id in site_history form a clean timeline.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: the versions of one site_id in site_history form a clean timeline. -- Each version must end exactly where the next one starts: no overlap and no gap. A version may be -- empty (valid_from = valid_to) when two changes carry the same timestamp; it never ends before it -- starts. Ties are ordered by valid_to, so an empty version sorts before the one that replaced it. SELECT site_id, valid_from, valid_to, next_valid_from FROM ( SELECT site_id, valid_from, valid_to, LEAD(valid_from) OVER (PARTITION BY site_id ORDER BY valid_from, valid_to) AS next_valid_from FROM hist.site_history ) versions WHERE valid_from > valid_to OR (next_valid_from IS NOT NULL AND valid_to <> next_valid_from)"
+    },
+    {
+      "name": "sql/checks/rules/history/scd2_no_overlap.sql on hist.study_history",
+      "layer": "hist",
+      "description": "The versions of one study_id in study_history form a clean timeline.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: the versions of one study_id in study_history form a clean timeline. -- Each version must end exactly where the next one starts: no overlap and no gap. A version may be -- empty (valid_from = valid_to) when two changes carry the same timestamp; it never ends before it -- starts. Ties are ordered by valid_to, so an empty version sorts before the one that replaced it. SELECT study_id, valid_from, valid_to, next_valid_from FROM ( SELECT study_id, valid_from, valid_to, LEAD(valid_from) OVER (PARTITION BY study_id ORDER BY valid_from, valid_to) AS next_valid_from FROM hist.study_history ) versions WHERE valid_from > valid_to OR (next_valid_from IS NOT NULL AND valid_to <> next_valid_from)"
+    },
+    {
+      "name": "sql/checks/rules/history/scd2_no_overlap.sql on hist.subject_history",
+      "layer": "hist",
+      "description": "The versions of one subject_id in subject_history form a clean timeline.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: the versions of one subject_id in subject_history form a clean timeline. -- Each version must end exactly where the next one starts: no overlap and no gap. A version may be -- empty (valid_from = valid_to) when two changes carry the same timestamp; it never ends before it -- starts. Ties are ordered by valid_to, so an empty version sorts before the one that replaced it. SELECT subject_id, valid_from, valid_to, next_valid_from FROM ( SELECT subject_id, valid_from, valid_to, LEAD(valid_from) OVER (PARTITION BY subject_id ORDER BY valid_from, valid_to) AS next_valid_from FROM hist.subject_history ) versions WHERE valid_from > valid_to OR (next_valid_from IS NOT NULL AND valid_to <> next_valid_from)"
+    },
+    {
+      "name": "sql/checks/rules/history/scd2_no_overlap.sql on hist.visit_history",
+      "layer": "hist",
+      "description": "The versions of one visit_id in visit_history form a clean timeline.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: the versions of one visit_id in visit_history form a clean timeline. -- Each version must end exactly where the next one starts: no overlap and no gap. A version may be -- empty (valid_from = valid_to) when two changes carry the same timestamp; it never ends before it -- starts. Ties are ordered by valid_to, so an empty version sorts before the one that replaced it. SELECT visit_id, valid_from, valid_to, next_valid_from FROM ( SELECT visit_id, valid_from, valid_to, LEAD(valid_from) OVER (PARTITION BY visit_id ORDER BY valid_from, valid_to) AS next_valid_from FROM hist.visit_history ) versions WHERE valid_from > valid_to OR (next_valid_from IS NOT NULL AND valid_to <> next_valid_from)"
+    },
+    {
+      "name": "sql/checks/rules/history/scd2_single_current.sql on hist.adverse_event_history",
+      "layer": "hist",
+      "description": "Exactly one current version per ae_id in adverse_event_history, and it is the open-ended one.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: exactly one current version per ae_id in adverse_event_history, and it is the open-ended one. SELECT ae_id, count(*) FILTER (WHERE is_current) AS current_versions, max(valid_to) AS last_valid_to FROM hist.adverse_event_history GROUP BY ae_id HAVING count(*) FILTER (WHERE is_current) <> 1 OR bool_or(is_current AND valid_to <> timestamptz '9999-12-31 00:00:00+00')"
+    },
+    {
+      "name": "sql/checks/rules/history/scd2_single_current.sql on hist.site_history",
+      "layer": "hist",
+      "description": "Exactly one current version per site_id in site_history, and it is the open-ended one.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: exactly one current version per site_id in site_history, and it is the open-ended one. SELECT site_id, count(*) FILTER (WHERE is_current) AS current_versions, max(valid_to) AS last_valid_to FROM hist.site_history GROUP BY site_id HAVING count(*) FILTER (WHERE is_current) <> 1 OR bool_or(is_current AND valid_to <> timestamptz '9999-12-31 00:00:00+00')"
+    },
+    {
+      "name": "sql/checks/rules/history/scd2_single_current.sql on hist.study_history",
+      "layer": "hist",
+      "description": "Exactly one current version per study_id in study_history, and it is the open-ended one.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: exactly one current version per study_id in study_history, and it is the open-ended one. SELECT study_id, count(*) FILTER (WHERE is_current) AS current_versions, max(valid_to) AS last_valid_to FROM hist.study_history GROUP BY study_id HAVING count(*) FILTER (WHERE is_current) <> 1 OR bool_or(is_current AND valid_to <> timestamptz '9999-12-31 00:00:00+00')"
+    },
+    {
+      "name": "sql/checks/rules/history/scd2_single_current.sql on hist.subject_history",
+      "layer": "hist",
+      "description": "Exactly one current version per subject_id in subject_history, and it is the open-ended one.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: exactly one current version per subject_id in subject_history, and it is the open-ended one. SELECT subject_id, count(*) FILTER (WHERE is_current) AS current_versions, max(valid_to) AS last_valid_to FROM hist.subject_history GROUP BY subject_id HAVING count(*) FILTER (WHERE is_current) <> 1 OR bool_or(is_current AND valid_to <> timestamptz '9999-12-31 00:00:00+00')"
+    },
+    {
+      "name": "sql/checks/rules/history/scd2_single_current.sql on hist.visit_history",
+      "layer": "hist",
+      "description": "Exactly one current version per visit_id in visit_history, and it is the open-ended one.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: exactly one current version per visit_id in visit_history, and it is the open-ended one. SELECT visit_id, count(*) FILTER (WHERE is_current) AS current_versions, max(valid_to) AS last_valid_to FROM hist.visit_history GROUP BY visit_id HAVING count(*) FILTER (WHERE is_current) <> 1 OR bool_or(is_current AND valid_to <> timestamptz '9999-12-31 00:00:00+00')"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on hist.adverse_event_history (change_seq)",
+      "layer": "hist",
+      "description": "(change_seq) identifies exactly one row in adverse_event_history.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (change_seq) identifies exactly one row in adverse_event_history. -- Returns every key that appears more than once, with the number of copies. SELECT change_seq, count(*) AS copies FROM hist.adverse_event_history GROUP BY change_seq HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on hist.site_history (change_seq)",
+      "layer": "hist",
+      "description": "(change_seq) identifies exactly one row in site_history.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (change_seq) identifies exactly one row in site_history. -- Returns every key that appears more than once, with the number of copies. SELECT change_seq, count(*) AS copies FROM hist.site_history GROUP BY change_seq HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on hist.study_history (change_seq)",
+      "layer": "hist",
+      "description": "(change_seq) identifies exactly one row in study_history.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (change_seq) identifies exactly one row in study_history. -- Returns every key that appears more than once, with the number of copies. SELECT change_seq, count(*) AS copies FROM hist.study_history GROUP BY change_seq HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on hist.subject_history (change_seq)",
+      "layer": "hist",
+      "description": "(change_seq) identifies exactly one row in subject_history.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (change_seq) identifies exactly one row in subject_history. -- Returns every key that appears more than once, with the number of copies. SELECT change_seq, count(*) AS copies FROM hist.subject_history GROUP BY change_seq HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on hist.visit_history (change_seq)",
+      "layer": "hist",
+      "description": "(change_seq) identifies exactly one row in visit_history.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (change_seq) identifies exactly one row in visit_history. -- Returns every key that appears more than once, with the number of copies. SELECT change_seq, count(*) AS copies FROM hist.visit_history GROUP BY change_seq HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/contracts/hist.json",
+      "layer": "hist",
+      "description": "The hist layer has no breaking change against contract v1.0.0 (compatible changes are reported; next version would be 1.0.0)",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "sql/checks/schema/columns.sql + sql/checks/schema/partition_keys.sql"
+    },
+    {
+      "name": "sql/checks/rules/history/deletes_applied.sql on latest.adverse_event",
+      "layer": "latest",
+      "description": "A adverse_event whose last change was a delete is absent from the latest layer.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: a adverse_event whose last change was a delete is absent from the latest layer. SELECT l.ae_id, h.change_seq AS delete_change_seq, h.valid_from AS deleted_at FROM latest.adverse_event l JOIN hist.adverse_event_history h ON h.ae_id = l.ae_id AND h.is_current AND h.is_deleted"
+    },
+    {
+      "name": "sql/checks/rules/history/deletes_applied.sql on latest.site",
+      "layer": "latest",
+      "description": "A site whose last change was a delete is absent from the latest layer.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: a site whose last change was a delete is absent from the latest layer. SELECT l.site_id, h.change_seq AS delete_change_seq, h.valid_from AS deleted_at FROM latest.site l JOIN hist.site_history h ON h.site_id = l.site_id AND h.is_current AND h.is_deleted"
+    },
+    {
+      "name": "sql/checks/rules/history/deletes_applied.sql on latest.study",
+      "layer": "latest",
+      "description": "A study whose last change was a delete is absent from the latest layer.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: a study whose last change was a delete is absent from the latest layer. SELECT l.study_id, h.change_seq AS delete_change_seq, h.valid_from AS deleted_at FROM latest.study l JOIN hist.study_history h ON h.study_id = l.study_id AND h.is_current AND h.is_deleted"
+    },
+    {
+      "name": "sql/checks/rules/history/deletes_applied.sql on latest.subject",
+      "layer": "latest",
+      "description": "A subject whose last change was a delete is absent from the latest layer.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: a subject whose last change was a delete is absent from the latest layer. SELECT l.subject_id, h.change_seq AS delete_change_seq, h.valid_from AS deleted_at FROM latest.subject l JOIN hist.subject_history h ON h.subject_id = l.subject_id AND h.is_current AND h.is_deleted"
+    },
+    {
+      "name": "sql/checks/rules/history/deletes_applied.sql on latest.visit",
+      "layer": "latest",
+      "description": "A visit whose last change was a delete is absent from the latest layer.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: a visit whose last change was a delete is absent from the latest layer. SELECT l.visit_id, h.change_seq AS delete_change_seq, h.valid_from AS deleted_at FROM latest.visit l JOIN hist.visit_history h ON h.visit_id = l.visit_id AND h.is_current AND h.is_deleted"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on latest.adverse_event (ae_id)",
+      "layer": "latest",
+      "description": "(ae_id) identifies exactly one row in adverse_event.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (ae_id) identifies exactly one row in adverse_event. -- Returns every key that appears more than once, with the number of copies. SELECT ae_id, count(*) AS copies FROM latest.adverse_event GROUP BY ae_id HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on latest.site (site_id)",
+      "layer": "latest",
+      "description": "(site_id) identifies exactly one row in site.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (site_id) identifies exactly one row in site. -- Returns every key that appears more than once, with the number of copies. SELECT site_id, count(*) AS copies FROM latest.site GROUP BY site_id HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on latest.study (study_id)",
+      "layer": "latest",
+      "description": "(study_id) identifies exactly one row in study.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (study_id) identifies exactly one row in study. -- Returns every key that appears more than once, with the number of copies. SELECT study_id, count(*) AS copies FROM latest.study GROUP BY study_id HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on latest.subject (subject_id)",
+      "layer": "latest",
+      "description": "(subject_id) identifies exactly one row in subject.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (subject_id) identifies exactly one row in subject. -- Returns every key that appears more than once, with the number of copies. SELECT subject_id, count(*) AS copies FROM latest.subject GROUP BY subject_id HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/checks/rules/keys/unique.sql on latest.visit (visit_id)",
+      "layer": "latest",
+      "description": "(visit_id) identifies exactly one row in visit.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: (visit_id) identifies exactly one row in visit. -- Returns every key that appears more than once, with the number of copies. SELECT visit_id, count(*) AS copies FROM latest.visit GROUP BY visit_id HAVING count(*) > 1"
+    },
+    {
+      "name": "sql/contracts/latest.json",
+      "layer": "latest",
+      "description": "The latest layer has no breaking change against contract v1.0.0 (compatible changes are reported; next version would be 1.0.0)",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "sql/checks/schema/columns.sql + sql/checks/schema/partition_keys.sql"
+    },
+    {
+      "name": "sql/checks/rules/partitions/default_partition_empty.sql on raw.adverse_event_events",
+      "layer": "raw",
+      "description": "No row of adverse_event_events falls outside the planned monthly partitions.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: no row of adverse_event_events falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM raw.adverse_event_events_default"
+    },
+    {
+      "name": "sql/checks/rules/partitions/default_partition_empty.sql on raw.site_events",
+      "layer": "raw",
+      "description": "No row of site_events falls outside the planned monthly partitions.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: no row of site_events falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM raw.site_events_default"
+    },
+    {
+      "name": "sql/checks/rules/partitions/default_partition_empty.sql on raw.study_events",
+      "layer": "raw",
+      "description": "No row of study_events falls outside the planned monthly partitions.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: no row of study_events falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM raw.study_events_default"
+    },
+    {
+      "name": "sql/checks/rules/partitions/default_partition_empty.sql on raw.subject_events",
+      "layer": "raw",
+      "description": "No row of subject_events falls outside the planned monthly partitions.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: no row of subject_events falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM raw.subject_events_default"
+    },
+    {
+      "name": "sql/checks/rules/partitions/default_partition_empty.sql on raw.visit_events",
+      "layer": "raw",
+      "description": "No row of visit_events falls outside the planned monthly partitions.",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: no row of visit_events falls outside the planned monthly partitions. -- Anything in the DEFAULT partition has a date nobody planned for (bad parse, wrong year...). SELECT * FROM raw.visit_events_default"
+    },
+    {
+      "name": "sql/checks/rules/partitions/partition_plan.sql on raw.adverse_event_events",
+      "layer": "raw",
+      "description": "Adverse_event_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: adverse_event_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one -- calendar month wide, named <table>_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = 'raw' AND p.relname = 'adverse_event_events' ), ranges AS ( SELECT partition_name, substring(bound FROM 'FROM \\(''([^'']+)''\\)')::date AS lower_bound, substring(bound FROM 'TO \\(''([^'']+)''\\)')::date AS upper_bound FROM parts WHERE bound <> 'DEFAULT' ), expected AS ( SELECT m::date AS month FROM generate_series(date '2024-12-01', date '2026-12-01', interval '1 month') AS m ) SELECT e.month AS month, NULL::text AS partition_name, 'missing partition' AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, 'not exactly one calendar month' FROM ranges r WHERE extract(DAY FROM r.lower_bound) <> 1 OR r.upper_bound <> (r.lower_bound + interval '1 month')::date UNION ALL SELECT r.lower_bound, r.partition_name, 'name does not match its bounds' FROM ranges r WHERE r.partition_name <> 'adverse_event_events_' || to_char(r.lower_bound, 'YYYYMM') UNION ALL SELECT NULL, NULL, 'no DEFAULT partition' WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = 'DEFAULT')"
+    },
+    {
+      "name": "sql/checks/rules/partitions/partition_plan.sql on raw.site_events",
+      "layer": "raw",
+      "description": "Site_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: site_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one -- calendar month wide, named <table>_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = 'raw' AND p.relname = 'site_events' ), ranges AS ( SELECT partition_name, substring(bound FROM 'FROM \\(''([^'']+)''\\)')::date AS lower_bound, substring(bound FROM 'TO \\(''([^'']+)''\\)')::date AS upper_bound FROM parts WHERE bound <> 'DEFAULT' ), expected AS ( SELECT m::date AS month FROM generate_series(date '2024-12-01', date '2026-12-01', interval '1 month') AS m ) SELECT e.month AS month, NULL::text AS partition_name, 'missing partition' AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, 'not exactly one calendar month' FROM ranges r WHERE extract(DAY FROM r.lower_bound) <> 1 OR r.upper_bound <> (r.lower_bound + interval '1 month')::date UNION ALL SELECT r.lower_bound, r.partition_name, 'name does not match its bounds' FROM ranges r WHERE r.partition_name <> 'site_events_' || to_char(r.lower_bound, 'YYYYMM') UNION ALL SELECT NULL, NULL, 'no DEFAULT partition' WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = 'DEFAULT')"
+    },
+    {
+      "name": "sql/checks/rules/partitions/partition_plan.sql on raw.study_events",
+      "layer": "raw",
+      "description": "Study_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: study_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one -- calendar month wide, named <table>_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = 'raw' AND p.relname = 'study_events' ), ranges AS ( SELECT partition_name, substring(bound FROM 'FROM \\(''([^'']+)''\\)')::date AS lower_bound, substring(bound FROM 'TO \\(''([^'']+)''\\)')::date AS upper_bound FROM parts WHERE bound <> 'DEFAULT' ), expected AS ( SELECT m::date AS month FROM generate_series(date '2024-12-01', date '2026-12-01', interval '1 month') AS m ) SELECT e.month AS month, NULL::text AS partition_name, 'missing partition' AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, 'not exactly one calendar month' FROM ranges r WHERE extract(DAY FROM r.lower_bound) <> 1 OR r.upper_bound <> (r.lower_bound + interval '1 month')::date UNION ALL SELECT r.lower_bound, r.partition_name, 'name does not match its bounds' FROM ranges r WHERE r.partition_name <> 'study_events_' || to_char(r.lower_bound, 'YYYYMM') UNION ALL SELECT NULL, NULL, 'no DEFAULT partition' WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = 'DEFAULT')"
+    },
+    {
+      "name": "sql/checks/rules/partitions/partition_plan.sql on raw.subject_events",
+      "layer": "raw",
+      "description": "Subject_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: subject_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one -- calendar month wide, named <table>_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = 'raw' AND p.relname = 'subject_events' ), ranges AS ( SELECT partition_name, substring(bound FROM 'FROM \\(''([^'']+)''\\)')::date AS lower_bound, substring(bound FROM 'TO \\(''([^'']+)''\\)')::date AS upper_bound FROM parts WHERE bound <> 'DEFAULT' ), expected AS ( SELECT m::date AS month FROM generate_series(date '2024-12-01', date '2026-12-01', interval '1 month') AS m ) SELECT e.month AS month, NULL::text AS partition_name, 'missing partition' AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, 'not exactly one calendar month' FROM ranges r WHERE extract(DAY FROM r.lower_bound) <> 1 OR r.upper_bound <> (r.lower_bound + interval '1 month')::date UNION ALL SELECT r.lower_bound, r.partition_name, 'name does not match its bounds' FROM ranges r WHERE r.partition_name <> 'subject_events_' || to_char(r.lower_bound, 'YYYYMM') UNION ALL SELECT NULL, NULL, 'no DEFAULT partition' WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = 'DEFAULT')"
+    },
+    {
+      "name": "sql/checks/rules/partitions/partition_plan.sql on raw.visit_events",
+      "layer": "raw",
+      "description": "Visit_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one",
+      "passed": true,
+      "failing_rows": 0,
+      "sample": [],
+      "sql": "-- Rule: visit_events has one partition per month from 2024-12-01 to 2026-12-01, each exactly one -- calendar month wide, named <table>_YYYYMM after its lower bound, plus a DEFAULT partition. -- Returns one row per problem found in the catalog. WITH parts AS ( SELECT c.relname AS partition_name, pg_get_expr(c.relpartbound, c.oid) AS bound FROM pg_inherits i JOIN pg_class c ON c.oid = i.inhrelid JOIN pg_class p ON p.oid = i.inhparent JOIN pg_namespace n ON n.oid = p.relnamespace WHERE n.nspname = 'raw' AND p.relname = 'visit_events' ), ranges AS ( SELECT partition_name, substring(bound FROM 'FROM \\(''([^'']+)''\\)')::date AS lower_bound, substring(bound FROM 'TO \\(''([^'']+)''\\)')::date AS upper_bound FROM parts WHERE bound <> 'DEFAULT' ), expected AS ( SELECT m::date AS month FROM generate_series(date '2024-12-01', date '2026-12-01', interval '1 month') AS m ) SELECT e.month AS month, NULL::text AS partition_name, 'missing partition' AS problem FROM expected e LEFT JOIN ranges r ON r.lower_bound = e.month WHERE r.partition_name IS NULL UNION ALL SELECT r.lower_bound, r.partition_name, 'not exactly one calendar month' FROM ranges r WHERE extract(DAY FROM r.lower_bound) <> 1 OR r.upper_bound <> (r.lower_bound + interval '1 month')::date UNION ALL SELECT r.lower_bound, r.partition_name, 'name does not match its bounds' FROM ranges r WHERE r.partition_name <> 'visit_events_' || to_char(r.lower_bound, 'YYYYMM') UNION ALL SELECT NULL, NULL, 'no DEFAULT partition' WHERE NOT EXISTS (SELECT 1 FROM parts WHERE bound = 'DEFAULT')"
+    }
+  ],
+  "mutations": [
+    {
+      "defect": "sql/defects/facts/wrong_site_version.sql",
+      "story": "Facts were joined to the current site version instead of the version valid at onset",
+      "expected_check": "sql/checks/rules/history/scd2_point_in_time_site.sql on dwh",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/rules/history/scd2_point_in_time_site.sql on dwh"
+      ]
+    },
+    {
+      "defect": "sql/defects/views/view_joins_site_by_natural_key.sql",
+      "story": "The monthly safety view joined the SCD2 site dimension on site_id instead of site_sk, fanning out rows",
+      "expected_check": "sql/checks/recon/views/v_safety_by_study_month_vs_source",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/recon/views/v_safety_by_study_month_vs_source"
+      ]
+    },
+    {
+      "defect": "sql/defects/dimensions/two_current_site_versions.sql",
+      "story": "The is_current flag was not reset when a newer site version arrived",
+      "expected_check": "sql/checks/rules/history/scd2_single_current.sql on dwh.dim_site",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/recon/views/v_site_current_vs_source",
+        "sql/checks/rules/history/scd2_single_current.sql on dwh.dim_site"
+      ]
+    },
+    {
+      "defect": "sql/defects/schema/column_type_changed.sql",
+      "story": "A migration changed a numeric column to text, which breaks sorting and aggregation downstream",
+      "expected_check": "sql/contracts/dwh.json",
+      "caught": true,
+      "caught_by": [
+        "sql/contracts/dwh.json"
+      ]
+    },
+    {
+      "defect": "sql/defects/facts/lost_serious_flag.sql",
+      "story": "A boolean cast turned some serious events into non-serious ones",
+      "expected_check": "sql/checks/recon/aggregates/safety_totals_by_study",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/recon/aggregates/safety_totals_by_study",
+        "sql/checks/recon/facts/fact_adverse_event_vs_source",
+        "sql/checks/recon/views/v_adverse_event_detail_vs_source",
+        "sql/checks/recon/views/v_safety_by_study_month_vs_source"
+      ]
+    },
+    {
+      "defect": "sql/defects/history/history_overlap.sql",
+      "story": "An SCD2 job forgot to close the previous version before opening the next",
+      "expected_check": "sql/checks/rules/history/scd2_no_overlap.sql on hist.site_history",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/rules/history/scd2_no_overlap.sql on hist.site_history"
+      ]
+    },
+    {
+      "defect": "sql/defects/facts/dropped_fact_rows.sql",
+      "story": "An inner join on a stale dimension silently dropped facts",
+      "expected_check": "sql/checks/recon/facts/fact_adverse_event_vs_source",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/recon/aggregates/safety_totals_by_study",
+        "sql/checks/recon/facts/fact_adverse_event_vs_source",
+        "sql/checks/recon/views/v_adverse_event_detail_vs_source",
+        "sql/checks/recon/views/v_safety_by_study_month_vs_source"
+      ]
+    },
+    {
+      "defect": "sql/defects/partitions/missing_partition.sql",
+      "story": "A maintenance job detached a monthly partition and never re-attached it",
+      "expected_check": "sql/checks/rules/partitions/partition_plan.sql on dwh.fact_adverse_event",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/recon/aggregates/safety_totals_by_study",
+        "sql/checks/recon/facts/fact_adverse_event_vs_source",
+        "sql/checks/recon/views/v_adverse_event_detail_vs_source",
+        "sql/checks/recon/views/v_safety_by_study_month_vs_source",
+        "sql/checks/rules/partitions/partition_plan.sql on dwh.fact_adverse_event"
+      ]
+    },
+    {
+      "defect": "sql/defects/latest/stale_latest_version.sql",
+      "story": "Dedup ordered by ingestion time instead of change_seq, so an older version won",
+      "expected_check": "sql/checks/recon/latest/latest_vs_source for adverse_event",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/recon/history/hist_current_vs_latest for adverse_event",
+        "sql/checks/recon/latest/latest_vs_source for adverse_event"
+      ]
+    },
+    {
+      "defect": "sql/defects/facts/orphan_fact.sql",
+      "story": "A fact row was loaded before its dimension row existed (late-arriving dimension)",
+      "expected_check": "sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.subject_sk",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/recon/facts/fact_adverse_event_vs_source",
+        "sql/checks/recon/views/v_adverse_event_detail_vs_source",
+        "sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.subject_sk"
+      ]
+    },
+    {
+      "defect": "sql/defects/schema/dropped_column.sql",
+      "story": "A refactoring dropped a column that downstream reports still read (data reconciliation cannot see it)",
+      "expected_check": "sql/contracts/dwh.json",
+      "caught": true,
+      "caught_by": [
+        "sql/contracts/dwh.json"
+      ]
+    },
+    {
+      "defect": "sql/defects/privacy/email_in_free_text.sql",
+      "story": "A reporter's e-mail address was typed into the event description and copied into the warehouse",
+      "expected_check": "sql/checks/rules/privacy/personal_data_values.sql on dwh",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/recon/facts/fact_adverse_event_vs_source",
+        "sql/checks/recon/views/v_adverse_event_detail_vs_source",
+        "sql/checks/rules/privacy/personal_data_values.sql on dwh"
+      ]
+    },
+    {
+      "defect": "sql/defects/latest/dedup_skipped.sql",
+      "story": "The latest job appended a redelivered event instead of collapsing it",
+      "expected_check": "sql/checks/rules/keys/unique.sql on latest.adverse_event (ae_id)",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/recon/history/hist_current_vs_latest for adverse_event",
+        "sql/checks/recon/latest/latest_vs_source for adverse_event",
+        "sql/checks/rules/keys/unique.sql on latest.adverse_event (ae_id)"
+      ]
+    },
+    {
+      "defect": "sql/defects/partitions/out_of_range_date.sql",
+      "story": "A date parsed with day and month swapped landed outside the partition plan",
+      "expected_check": "sql/checks/rules/partitions/default_partition_empty.sql on dwh.fact_adverse_event",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/recon/aggregates/safety_totals_by_study",
+        "sql/checks/recon/facts/fact_adverse_event_vs_source",
+        "sql/checks/recon/views/v_safety_by_study_month_vs_source",
+        "sql/checks/rules/keys/referential_integrity.sql on dwh.fact_adverse_event.onset_date_key",
+        "sql/checks/rules/partitions/default_partition_empty.sql on dwh.fact_adverse_event"
+      ]
+    },
+    {
+      "defect": "sql/defects/latest/delete_not_applied.sql",
+      "story": "A delete event was ignored, so a record entered in error is still reported",
+      "expected_check": "sql/checks/rules/history/deletes_applied.sql on latest.adverse_event",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/recon/history/hist_current_vs_latest for adverse_event",
+        "sql/checks/recon/latest/latest_vs_source for adverse_event",
+        "sql/checks/rules/history/deletes_applied.sql on latest.adverse_event"
+      ]
+    },
+    {
+      "defect": "sql/defects/privacy/birth_date_exposed.sql",
+      "story": "A developer added the subject's birth year to the analyst-facing subject dimension",
+      "expected_check": "sql/checks/rules/privacy/personal_data_columns.sql on dwh",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/rules/privacy/personal_data_columns.sql on dwh"
+      ]
+    },
+    {
+      "defect": "sql/defects/dimensions/duplicate_subject.sql",
+      "story": "A dimension reload inserted a subject twice with a new surrogate key",
+      "expected_check": "sql/checks/rules/keys/unique.sql on dwh.dim_subject (subject_id)",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/recon/dimensions/dim_subject_vs_source",
+        "sql/checks/rules/keys/unique.sql on dwh.dim_subject (subject_id)"
+      ]
+    },
+    {
+      "defect": "sql/defects/facts/corrupted_grade.sql",
+      "story": "A mapping table shifted toxicity grades by one",
+      "expected_check": "sql/checks/recon/facts/fact_adverse_event_vs_source",
+      "caught": true,
+      "caught_by": [
+        "sql/checks/recon/aggregates/safety_totals_by_study",
+        "sql/checks/recon/facts/fact_adverse_event_vs_source",
+        "sql/checks/recon/views/v_adverse_event_detail_vs_source"
+      ]
+    }
+  ],
+  "genai": [
+    {
+      "case_id": "SUBJ-0101",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0103",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0103",
+      "summariser": "fallback after: None",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0103",
+      "summariser": "fallback after: None",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0103",
+      "summariser": "fallback after: None",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0103",
+      "summariser": "fallback after: None",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0103",
+      "summariser": "fallback after: None",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0103",
+      "summariser": "fallback after: None",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0105",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0107",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0104",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0106",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0102",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "warehouse SUBJ-0038",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "warehouse SUBJ-0027",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "warehouse SUBJ-0034",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "warehouse SUBJ-0110",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "warehouse SUBJ-0014",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "warehouse SUBJ-0088",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "warehouse SUBJ-0090",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "warehouse SUBJ-0011",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "warehouse SUBJ-0106",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "warehouse SUBJ-0035",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0103 (model that invents events)",
+      "summariser": "invents-events double",
+      "passed": false,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": false,
+        "max_grade_accuracy": false,
+        "term_grounding": false,
+        "term_coverage": true,
+        "numeric_grounding": false,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {
+        "count_accuracy": "expected total=2 serious=1, got total=3 serious=2",
+        "max_grade_accuracy": "expected 4, got 5",
+        "term_grounding": "terms not in the records: ['Myocardial infarction']",
+        "numeric_grounding": "numbers not supported by the data: ['12']"
+      },
+      "expected_failure": true,
+      "score_ok": true
+    },
+    {
+      "case_id": "SUBJ-0102",
+      "summariser": "template",
+      "passed": true,
+      "metrics": {
+        "subject_match": true,
+        "count_accuracy": true,
+        "max_grade_accuracy": true,
+        "term_grounding": true,
+        "term_coverage": true,
+        "numeric_grounding": true,
+        "serious_disclosed": true,
+        "length_limit": true
+      },
+      "reasons": {},
+      "expected_failure": false,
+      "score_ok": true
+    }
+  ],
+  "genai_metrics": {
+    "subject_match": {
+      "passed": 24,
+      "total": 24
+    },
+    "count_accuracy": {
+      "passed": 24,
+      "total": 24
+    },
+    "max_grade_accuracy": {
+      "passed": 24,
+      "total": 24
+    },
+    "term_grounding": {
+      "passed": 24,
+      "total": 24
+    },
+    "term_coverage": {
+      "passed": 24,
+      "total": 24
+    },
+    "numeric_grounding": {
+      "passed": 24,
+      "total": 24
+    },
+    "serious_disclosed": {
+      "passed": 24,
+      "total": 24
+    },
+    "length_limit": {
+      "passed": 24,
+      "total": 24
+    }
+  }
+}

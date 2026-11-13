@@ -1,0 +1,19 @@
+{
+  "title": "Clinical safety warehouse: data quality requirements",
+  "version": "1.0.0",
+  "requirements": [
+    {"id": "REQ_01", "title": "Completeness and accuracy", "text": "Every current source record reaches each layer and the warehouse complete and unchanged, row by row and in aggregate."},
+    {"id": "REQ_02", "title": "Deduplication and deletes", "text": "Redelivered change events are kept once, the latest change per key wins, and records deleted in the source are removed from current state."},
+    {"id": "REQ_03", "title": "Full history", "text": "Every change is kept exactly once with a clean validity timeline per key, including deletes as tombstones."},
+    {"id": "REQ_04", "title": "Dimensional model integrity", "text": "Keys are unique, every fact finds its dimension rows, and type 2 dimensions are joined at the point in time of the event."},
+    {"id": "REQ_05", "title": "Partitioning", "text": "Facts and raw events sit in complete monthly partitions, nothing falls outside the plan, and date filters read only the partitions they need."},
+    {"id": "REQ_06", "title": "Controlled schema changes", "text": "Every layer matches a versioned, reviewed contract; breaking changes fail, compatible changes are reported."},
+    {"id": "REQ_07", "title": "Incremental loads", "text": "Loading data incrementally gives the same result as a full rebuild, whatever the arrival order, and re-running a load changes nothing."},
+    {"id": "REQ_08", "title": "Proven detection", "text": "Every check is shown to detect the defect it is designed for."},
+    {"id": "REQ_09", "title": "Production monitoring", "text": "The live warehouse is checked on a schedule for quality, freshness, volume and drift; results are stored and failures alerted."},
+    {"id": "REQ_10", "title": "Personal data protection", "text": "No unapproved personal data is stored, and approved personal data is visible only to authorised roles."},
+    {"id": "REQ_11", "title": "Grounded GenAI output", "text": "Generated safety narratives count exactly, invent nothing, disclose serious events, and the service keeps working when the model does not."},
+    {"id": "REQ_12", "title": "Reproducible test data", "text": "Test data is synthetic, seeded and documented with exact figures."},
+    {"id": "REQ_13", "title": "Traceable, retained evidence", "text": "Every requirement is traced to the tests that verify it, and each run's evidence is retained with tamper-evident hashes."}
+  ]
+}

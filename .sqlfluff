@@ -1,0 +1,62 @@
+[sqlfluff]
+dialect = postgres
+templater = placeholder
+# Rules that catch real problems: keyword case, ambiguous columns in joins, unused CTEs, file endings.
+# Indentation and spacing rules are off on purpose: the SQL is hand-aligned for readability.
+rules = CP01, RF02, LT12, ST03
+# DO $$ ... $$ blocks and partition DDL are valid Postgres the parser does not cover; lint the rest.
+ignore = parsing
+max_line_length = 120
+exclude_rules = LT05
+
+[sqlfluff:indentation]
+tab_space_size = 4
+allow_implicit_indents = True
+
+[sqlfluff:rules:capitalisation.keywords]
+capitalisation_policy = upper
+
+[sqlfluff:templater:placeholder]
+# {identifier} placeholders and :bind parameters, the two kinds used in sql/.
+param_regex = (?<!:)[:{](?P<param_name>[a-zA-Z_][a-zA-Z0-9_]*)\}?
+src = src
+raw = raw
+hist = hist
+latest = latest
+dwh = dwh
+schema = dwh
+table = t
+query = SELECT 1 AS a
+key_expr = q.a
+row_expr = q.a
+values = 1
+approved = 'x'
+condition = a IS NULL
+columns = a, b
+raw_columns = r.a, r.b
+source_columns = s.a, s.b
+set_columns = b = s.b
+buckets = 4
+max_hours = 1
+days = 1
+min_ratio = 1
+max_psi = 1
+max_gb = 1
+# :bind parameters become literals
+study_id = 1
+run_id = 1
+batch_start = 2026
+last_day = 1
+first_day = 1
+schema_name = 1
+subject_id = 1
+ae_id = 1
+limit = 1
+runs = 1
+as_of = 1
+date_from = 1
+date_until = 1
+year_month = 1
+evalset_version = 1
+engine = 1
+buckets_wanted = 1

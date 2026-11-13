@@ -1,0 +1,78 @@
+name: data-and-ai-tests
+
+# Public repository: nobody outside the owners can start this pipeline.
+# - Only `push` to main and `workflow_dispatch` trigger it; both need write access to the repository.
+# - No `pull_request` trigger: a pull request from a fork never runs anything here.
+# - Never `pull_request_target`: it would run fork code with this repository's secrets.
+# - The job runs only in iman88/qa-dw-python, not in forks, and the token can only read.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      genai_provider:
+        description: "template (offline) or claude (live, needs the ANTHROPIC_API_KEY secret)"
+        default: template
+      genai_fallback:
+        description: "on: answer from the template when Claude fails; off: evaluate Claude strictly"
+        default: "on"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    if: github.repository == 'iman88/qa-dw-python'
+    runs-on: ubuntu-26.04  # pinned: Python 3.15.2 is built for this image
+    services:
+      postgres:
+        image: postgres:18.7-alpine@sha256:75dcac3dfb1cd01ca3536910bbc84128759362f8b118bf8c55b38a94f68f3b73
+        env:
+          POSTGRES_USER: qa
+          POSTGRES_PASSWORD: qa
+          POSTGRES_DB: clinical
+        ports: ["55432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U qa -d clinical"
+          --health-interval 2s --health-timeout 3s --health-retries 30
+    env:
+      DB_URL: postgresql+psycopg://qa:qa@localhost:55432/clinical
+      GENAI_PROVIDER: ${{ inputs.genai_provider || 'template' }}
+      GENAI_FALLBACK: ${{ inputs.genai_fallback || 'on' }}
+      # The key is exposed only to manual runs that ask for Claude; pushes never see it.
+      ANTHROPIC_API_KEY: ${{ github.event_name == 'workflow_dispatch' && inputs.genai_provider == 'claude' && secrets.ANTHROPIC_API_KEY || '' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1  # v7.0.1
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0  # v7.1.0
+        with:
+          python-version-file: .python-version
+          cache: pip
+          cache-dependency-path: constraints.txt
+      - name: Postgres settings for parallel workers (service containers take no command line)
+        run: |
+          docker exec ${{ job.services.postgres.id }} psql -U qa -d clinical -c "ALTER SYSTEM SET max_locks_per_transaction = 1024" -c "ALTER SYSTEM SET max_connections = 400"
+          docker restart ${{ job.services.postgres.id }}
+          until docker exec ${{ job.services.postgres.id }} pg_isready -U qa -d clinical; do sleep 1; done
+      - run: python -m pip install pip==26.3
+      - run: pip install -c constraints.txt -e ".[test,dev]"
+      - run: ruff check src tests conftest.py
+      - run: ruff format --check src tests conftest.py
+      - run: sqlfluff lint sql
+      - run: mypy
+      - name: Tests (parallel, each worker in its own database)
+        run: pytest -n auto --alluredir=reports/allure-results
+        env:
+          TEST_RUN_ID: ci${{ github.run_id }}
+      - name: Evidence pack (reports frozen with SHA-256 hashes)
+        if: always()
+        run: clinical-dq evidence
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9  # v7.0.2
+        with:
+          name: reports
+          path: reports/

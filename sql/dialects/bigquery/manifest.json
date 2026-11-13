@@ -1,0 +1,18 @@
+{
+  "dialect": "bigquery",
+  "how_it_works": "A file under sql/ runs on BigQuery as follows: if sql/dialects/bigquery/<same path> exists it is used; otherwise the Postgres file is transpiled with sqlglot. Files using Postgres-only features must have a counterpart or be listed here with the reason they are not needed.",
+  "not_needed": {
+    "sql/build/security/": "BigQuery grants access with IAM roles, authorized views and column-level policy tags, not SQL GRANTs to database roles.",
+    "sql/checks/rules/privacy/personal_data_values.sql": "On BigQuery, value-level personal data scanning is a Cloud DLP (Sensitive Data Protection) inspection job on the dataset.",
+    "sql/defects/": "Test harness: bugs injected into the local Postgres build.",
+    "sql/incidents/": "Test harness: incidents simulated on the local Postgres build.",
+    "sql/schema_changes/": "Test harness: schema changes applied to the local Postgres build.",
+    "sql/fixtures/": "Test harness: the Postgres sandbox for hand-built change feeds.",
+    "sql/queries/partitions/": "Pruning on BigQuery is enforced by require_partition_filter and measured in bytes (sql/dialects/bigquery/checks/cost/), not read from EXPLAIN.",
+    "sql/queries/incremental/tables_of_schema.sql": "Test harness: lists Postgres tables to checksum a local build.",
+    "sql/queries/quality/": "Test harness: flaky-test history in the local results database.",
+    "sql/results/": "Results store of the local runner; on Google Cloud results go to a BigQuery dataset created by the runner.",
+    "sql/build/history/10_hist_schema.sql": "CREATE SCHEMA is part of each BigQuery build script (CREATE SCHEMA IF NOT EXISTS).",
+    "sql/build/latest/20_latest_schema.sql": "CREATE SCHEMA is part of each BigQuery build script (CREATE SCHEMA IF NOT EXISTS)."
+  }
+}
